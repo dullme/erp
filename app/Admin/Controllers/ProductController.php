@@ -94,6 +94,7 @@ class ProductController extends AdminController
         $form->number('ddp', __('DDP'));
         $form->image('image', __('图片'));
         $form->text('description', __('描述'));
+        $form->UEditor('content', __('详情'));
 
         return $form;
     }
