@@ -100,7 +100,10 @@ class ProductController extends AdminController
 
     public function product()
     {
-        $products = Product::select('id', 'sku as text')->get();
+        $q = request()->input('q');
+        $products = Product::where('sku', 'like', '%'.$q.'%')
+            ->orWhere('description', 'like', '%'.$q.'%')
+            ->select('id', 'sku as text', 'description', 'ddp', 'image')->get();
 
         return response()->json($products);
     }

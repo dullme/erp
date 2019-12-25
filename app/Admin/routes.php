@@ -19,4 +19,10 @@ Route::group([
     //组合管理
     $router->resource('composes', ComposeController::class);
 
+    //订单管理
+    $router->resource('orders', OrderController::class);
+
+    //库存管理
+    $router->resource('warehouses', WarehouseController::class);
+
 });

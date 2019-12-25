@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9dd538f9-68bf-44f8-9acc-19f55716d661" name="Default Changelist" comment="" />
+    <list default="true" id="9dd538f9-68bf-44f8-9acc-19f55716d661" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Admin/Controllers/ResponseController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Services/FileService.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/helpers.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/js/components/Order.vue" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/js/util.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/compose.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/ComposeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/ComposeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/ProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/routes.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/routes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Compose.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Compose.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/ComposeProduct.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/ComposeProduct.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Product.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Product.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/Compose.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Compose.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,6 +31,16 @@
     <execution>
       <executable />
     </execution>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="JsFlowSettings">
     <service-enabled>true</service-enabled>
@@ -125,9 +154,12 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Admin/Controllers" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/js/components" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -139,12 +171,16 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Controllers" />
+      <recent name="$PROJECT_DIR$/resources/js" />
       <recent name="$PROJECT_DIR$/public" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/app/Admin/Controllers" />
       <recent name="$PROJECT_DIR$/resources/js/components" />
-      <recent name="$PROJECT_DIR$/resources/js" />
+      <recent name="$PROJECT_DIR$/app/Admin/Controllers" />
+      <recent name="$PROJECT_DIR$/app/Admin" />
+      <recent name="$PROJECT_DIR$/app" />
+      <recent name="$PROJECT_DIR$/app/Services" />
     </key>
   </component>
   <component name="RunManager">
@@ -179,7 +215,11 @@
       <workItem from="1576171466095" duration="97000" />
       <workItem from="1576171590737" duration="48000" />
       <workItem from="1576557475626" duration="10395000" />
-      <workItem from="1576654433549" duration="15089000" />
+      <workItem from="1576654433549" duration="15689000" />
+      <workItem from="1576720303338" duration="5346000" />
+      <workItem from="1576732928503" duration="31255000" />
+      <workItem from="1577186203885" duration="8000" />
+      <workItem from="1577250972980" duration="917000" />
     </task>
     <servers />
   </component>
@@ -195,18 +235,27 @@
       <screen x="0" y="0" width="1280" height="800" />
     </state>
     <state x="328" y="116" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1280.800@0.0.1280.800" timestamp="1576171561230" />
-    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1576656203751">
+    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1576931793745">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1576656203751" />
+    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1576931793745" />
+    <state x="356" y="198" key="NewPhpClassDialog" timestamp="1576812946698">
+      <screen x="0" y="0" width="1280" height="800" />
+    </state>
+    <state x="356" y="198" key="NewPhpClassDialog/0.0.1280.800@0.0.1280.800" timestamp="1576812946698" />
+    <state x="401" y="0" key="RollbackChangesDialog" timestamp="1576746002771">
+      <screen x="0" y="0" width="1280" height="800" />
+    </state>
+    <state x="401" y="0" key="RollbackChangesDialog/0.0.1280.800@0.0.1280.800" timestamp="1576746002771" />
     <state x="0" y="0" key="SettingsEditor" timestamp="1576676721602">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="0" y="0" key="SettingsEditor/0.0.1280.800@0.0.1280.800" timestamp="1576171557486" />
     <state x="0" y="0" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1576676721602" />
-    <state width="801" height="600" key="SwitcherDM" timestamp="1576670428778">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state width="750" height="600" key="SwitcherDM" timestamp="1577251560740">
+      <screen x="0" y="0" width="1280" height="800" />
     </state>
-    <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1576670428778" />
+    <state width="750" height="600" key="SwitcherDM/0.0.1280.800@0.0.1280.800" timestamp="1577251560740" />
+    <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1576933704874" />
   </component>
 </project>
