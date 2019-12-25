@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel
+                    ERP
                 </div>
 
                 <div class="links">
@@ -96,5 +96,7 @@
                 </div>
             </div>
         </div>
+
+        <div style="text-align: center;font-size: 12px;padding: 10px 0">浙ICP备15016889号-1	</div>
     </body>
 </html>
