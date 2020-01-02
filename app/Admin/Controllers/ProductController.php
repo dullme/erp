@@ -26,27 +26,34 @@ class ProductController extends AdminController
     {
         $grid = new Grid(new Product);
 
-        $grid->column('id', __('ID'));
+//        $grid->column('id', __('ID'));
+        $grid->column('sku', __('SKU'));
         $grid->column('image', __('图片'))->image();
         $grid->column('description', __('描述'));
-        $grid->column('sku', __('SKU'));
         $grid->column('length', __('长'));
         $grid->column('width', __('宽'));
         $grid->column('height', __('高'));
         $grid->column('volume', '体积')->display(function (){
-            return $this->length * $this->width * $this->height / 1000000;
+            $volume = $this->length * $this->width * $this->height / 1000000;
+            return round($volume, 2);
         });
         $grid->column('weight', __('毛重'));
         $grid->column('coefficient', '系数')->display(function (){
             return ($this->width + $this->height) * 2 + $this->length;
         });
 
-        $grid->column('hq', 'HQ')->display(function (){
-            return 65 / ($this->length * $this->width * $this->height / 1000000);
+        $grid->column('hq', 'HQ')->display(function ($hq){
+            if($hq){
+                return $hq." <i class='fa fa-check text-success'></i>";
+            }
+
+            $hq = 65 / ($this->length * $this->width * $this->height / 1000000);
+
+            return round($hq, 0);
         });
 
         $grid->column('ddp', __('DDP'));
-        $grid->column('created_at', __('添加时间'));
+//        $grid->column('created_at', __('添加时间'));
 
         $grid->disableExport();
 
@@ -92,6 +99,7 @@ class ProductController extends AdminController
         $form->number('height', __('高'));
         $form->decimal('weight', __('毛重'));
         $form->number('ddp', __('DDP'));
+        $form->number('hq', __('HQ'));
         $form->image('image', __('图片'));
         $form->text('description', __('描述'));
         $form->UEditor('content', __('详情'));

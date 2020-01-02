@@ -32,14 +32,14 @@ class ComposeController extends ResponseController
     protected function grid()
     {
         $grid = new Grid(new Compose);
-        $grid->column('id', __('ID'));
+//        $grid->column('id', __('ID'));
+        $grid->column('asin', __('ASKU'))->display(function () {
+            return "<a href='/admin/media?path=/{$this->asin}'>{$this->asin}</a>";
+        });
         $grid->column('image', '图片')->display(function ($image) {
             return $image;
         })->image('', 100, 100);
         $grid->column('name', __('组合名称'));
-        $grid->column('asin', __('ASIN'))->display(function () {
-            return "<a href='/admin/media?path=/{$this->asin}'>{$this->asin}</a>";
-        });
         $grid->column('box', '箱数')->display(function (){
             return $this->composeProducts->sum('quantity');
         });
@@ -48,7 +48,7 @@ class ComposeController extends ResponseController
             $hq = $this->composeProducts->sum(function ($item){
                 return ($item->product->length * $item->product->width * $item->product->height * $item->quantity) / 1000000;
             });
-            return 65/$hq;
+            return round(65/$hq, 0);
         });
 
         $grid->column('ddp', 'DDP')->display(function () {
@@ -57,7 +57,7 @@ class ComposeController extends ResponseController
             });
         });
 
-        $grid->column('created_at', __('添加时间'));
+//        $grid->column('created_at', __('添加时间'));
 
         $grid->disableExport();
 
@@ -114,11 +114,13 @@ class ComposeController extends ResponseController
         request()->validate([
             'name' => 'required|unique:composes,name',
             'asin' => 'required|unique:composes,asin',
+            'hq' => 'integer',
         ], [
             'name.required' => '请输入组合名称',
             'name.unique'   => '该名称已存在',
             'asin.required' => '请输入 ASIN',
             'asin.unique'   => '该 ASIN 已存在',
+            'hq.integer'   => '必须为整数',
         ]);
 
         $file = request()->file('images');

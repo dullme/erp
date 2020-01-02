@@ -35,6 +35,7 @@ class OrderController extends ResponseController
         $grid->column('id', __('ID'));
         $grid->column('no', __('订单编号'));
         $grid->column('batch', __('生产批号'));
+        $grid->column('batch', __('供应商'));
         $grid->column('remark', __('备注'));
         $grid->column('created_at', __('添加时间'));
 
@@ -56,6 +57,7 @@ class OrderController extends ResponseController
         $show->field('id', __('ID'));
         $show->field('no', __('订单编号'));
         $show->field('batch', __('生产批号'));
+        $show->field('batch', __('供应商'));
         $show->field('remark', __('备注'));
         $show->field('created_at', __('添加时间'));
 
