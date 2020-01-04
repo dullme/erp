@@ -2,14 +2,16 @@
 
 namespace App\Admin\Controllers;
 
+use App\Order;
+use App\Warehouse;
+use Carbon\Carbon;
+use DB;
 use App\Product;
-use Encore\Admin\Controllers\AdminController;
-use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Show;
 
-class WarehouseController extends AdminController
+class WarehouseController extends ResponseController
 {
+
     /**
      * Title for current resource.
      *
@@ -43,19 +45,19 @@ class WarehouseController extends AdminController
 //        });
 
         $grid->column('ddp', __('DDP'));
-        $grid->column('quantity_1', '中国仓')->display(function (){
+        $grid->column('quantity_1', '中国仓')->display(function () {
             return $this->warehouses->where('status', 1)->sum('quantity');
         });
 
-        $grid->column('quantity_2', '海上')->display(function (){
+        $grid->column('quantity_2', '海上')->display(function () {
             return $this->warehouses->where('status', 2)->sum('quantity');
         });
 
-        $grid->column('quantity_3', '美国仓')->display(function (){
+        $grid->column('quantity_3', '美国仓')->display(function () {
             return $this->warehouses->where('status', 3)->sum('quantity');
         });
 
-        $grid->column('quantity_4', '电商')->display(function (){
+        $grid->column('quantity_4', '电商')->display(function () {
             return $this->warehouses->where('status', 4)->sum('quantity');
         });
 //        $grid->column('created_at', __('添加时间'));
@@ -67,5 +69,87 @@ class WarehouseController extends AdminController
         $grid->disableRowSelector();
 
         return $grid;
+    }
+
+    public function first()
+    {
+        request()->validate([
+            'order_id' => 'required|',
+        ], [
+            'order_id.required' => '缺少必要参数',
+        ]);
+
+//        $file = request()->file('images');
+        $productInfo = request()->input('product_info');
+        $productInfo = collect($productInfo)->where('deleted', 'false')->where('product_id', '!=', null);
+
+        if ($productInfo->where('quantity', '<', 1)->count()) {
+            return $this->setStatusCode(422)->responseError('单品数量必须大于0');
+        }
+
+        if ($productInfo->where('price', '<=', 0)->count()) {
+            return $this->setStatusCode(422)->responseError('单品价格必须大于0');
+        }
+
+        if ($productInfo->count() < 1) {
+            return $this->setStatusCode(422)->responseError('必须添加单品');
+        }
+
+//        if ($file) {
+//            $file = $this->saveAgreementFile($file);
+//            $file = $file->pluck('path')->toArray();
+//            $file = json_encode($file);
+//        }
+        $now = Carbon::now()->toDateTimeString();
+        DB::beginTransaction(); //开启事务
+        try {
+            $order = Order::findOrfail(request()->input('order_id'));
+            $batch = $order->batch + 1;
+
+            $productBatch = $productInfo->map(function ($item) use($batch, $now){
+                $item['batch'] = $batch;
+                $item['created_at'] = $now;
+                unset($item['deleted']);
+                return $item;
+            })->toArray();
+
+            $productInfo = $productInfo->groupBy('product_id')->map(function ($item, $index) use ($order, $now, $batch) {
+                $item->each(function ($price) use ($item) {
+                    if ($price['price'] != $item[0]['price']) {
+                        throw new \Exception('存在相同单品不同价格');
+                    }
+                });
+
+                return [
+                    'order_id'    => $order->id,
+                    'order_batch' => $batch,
+                    'product_id'  => $index,
+                    'quantity'    => $item->sum('quantity'),
+                    'status'      => 1,
+                    'created_at'  => $now,
+                    'updated_at'  => $now,
+                ];
+            });
+
+            $order->batch = $batch;
+            if($order->product_batch != null){
+                $order->product_batch = array_merge($order->product_batch, $productBatch);
+            }else{
+                $order->product_batch = $productBatch;
+            }
+
+            $order->save();
+
+            Warehouse::insert($productInfo->toArray());
+
+            DB::commit();   //保存
+
+            return $this->responseSuccess('添加成功');
+
+        } catch (\Exception $exception) {
+            DB::rollBack(); //回滚
+
+            return $this->setStatusCode(422)->responseError($exception->getMessage());
+        }
     }
 }

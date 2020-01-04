@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Product;
+use App\Supplier;
 use DB;
 use App\Order;
 use App\Warehouse;
@@ -32,14 +34,23 @@ class OrderController extends ResponseController
     {
         $grid = new Grid(new Order);
 
-        $grid->column('id', __('ID'));
-        $grid->column('no', __('订单编号'));
-        $grid->column('batch', __('生产批号'));
-        $grid->column('batch', __('供应商'));
-        $grid->column('remark', __('备注'));
-        $grid->column('created_at', __('添加时间'));
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $filter->equal('no', '订单编号');
+            $suppliers = Supplier::pluck('name', 'id');
+            $filter->equal('supplier_id', '供应商')->select($suppliers);
+        });
 
+//        $grid->column('id', __('ID'));
+        $grid->column('no', __('订单编号'));
+        $grid->supplier()->name('供应商');
+        $grid->column('signing_at', __('签订日'));
+        $grid->column('remark', __('备注'));
+//        $grid->column('created_at', __('添加时间'));
 //        $grid->column('updated_at', __('Updated at'));
+
+        $grid->disableRowSelector();
+        $grid->disableExport();
 
         return $grid;
     }
@@ -52,18 +63,36 @@ class OrderController extends ResponseController
      */
     protected function detail($id)
     {
-        $show = new Show(Order::findOrFail($id));
+        $this->loadVue();
 
-        $show->field('id', __('ID'));
-        $show->field('no', __('订单编号'));
-        $show->field('batch', __('生产批号'));
-        $show->field('batch', __('供应商'));
-        $show->field('remark', __('备注'));
-        $show->field('created_at', __('添加时间'));
+        $order = Order::with('supplier')->findOrFail($id);
+        $product_ids = collect($order->product)->pluck('product_id')->toArray();
+        $real_product = Product::select('id', 'sku', 'image')->find($product_ids);
+        $order->product = collect($order->product)->map(function ($item) use ($real_product) {
+            $res = $real_product->where('id', $item['product_id'])->first()->toArray();
 
-//        $show->field('updated_at', __('Updated at'));
+            return array_merge($res, [
+                'quantity' => $item['quantity'],
+                'price'    => bigNumber($item['price'])->getValue(),
+                'total'    => bigNumber($item['quantity'] * $item['price'])->getValue()
+            ]);
+        });
 
-        return $show;
+        $product_batch_ids = collect($order->product_batch)->groupBy('product_id')->keys();
+        $real_product_batch = Product::select('id', 'sku', 'image')->find($product_batch_ids);
+        $order->product_batch = collect($order->product_batch)->map(function ($item) use ($real_product_batch) {
+            $res = $real_product_batch->where('id', $item['product_id'])->first()->toArray();
+
+            return array_merge($res, [
+                'batch'      => $item['batch'],
+                'created_at' => $item['created_at'],
+                'quantity'   => $item['quantity'],
+                'price'      => bigNumber($item['price'])->getValue(),
+                'total'      => bigNumber($item['quantity'] * $item['price'])->getValue()
+            ]);
+        })->groupBy('batch');
+
+        return view('order', compact('order'));
     }
 
     /**
@@ -94,56 +123,62 @@ class OrderController extends ResponseController
     public function store()
     {
         request()->validate([
-            'no'    => 'required|unique:orders,no',
-            'batch' => 'required|unique:orders,batch',
+            'no'          => 'required|unique:orders,no',
+            'supplier_id' => 'required',
+            'signing_at'  => 'required|date:Y-m-d',
         ], [
-            'no.required'    => '请输入订单编号',
-            'no.unique'      => '该订单编号已存在',
-            'batch.required' => '请输入生产批号',
-            'batch.unique'   => '该生产批号已存在',
+            'no.required'          => '请输入订单编号',
+            'no.unique'            => '该订单编号已存在',
+            'supplier_id.required' => '请选择供应商',
+            'signing_at.required'  => '请选择签订日',
+            'signing_at.date'      => '签订日格式错误',
         ]);
 
-        $file = request()->file('images');
-        $projectInfo = request()->input('project_info');
-        $projectInfo = collect($projectInfo)->where('deleted', 'false')->where('project_id', '!=', null);
+//        $file = request()->file('images');
+        $productInfo = request()->input('product_info');
+        $productInfo = collect($productInfo)->where('deleted', 'false')->where('product_id', '!=', null);
 
-        if ($projectInfo->where('quantity', '<', 1)->count()) {
+        if ($productInfo->where('quantity', '<', 1)->count()) {
             return $this->setStatusCode(422)->responseError('单品数量必须大于0');
         }
 
-        if ($projectInfo->count() < 1) {
+        if ($productInfo->where('price', '<=', 0)->count()) {
+            return $this->setStatusCode(422)->responseError('单品价格必须大于0');
+        }
+
+        if ($productInfo->count() < 1) {
             return $this->setStatusCode(422)->responseError('必须添加单品');
         }
 
-        if ($file) {
-            $file = $this->saveAgreementFile($file);
-            $file = $file->pluck('path')->toArray();
-            $file = json_encode($file);
-        }
+//        if ($file) {
+//            $file = $this->saveAgreementFile($file);
+//            $file = $file->pluck('path')->toArray();
+//            $file = json_encode($file);
+//        }
 
-        $now = Carbon::now();
         DB::beginTransaction(); //开启事务
         try {
-            $orderId = Order::insertGetId([
-                'no'         => request()->input('no'),
-                'batch'      => request()->input('batch'),
-//                'image'      => $file,
-                'created_at' => $now,
-                'updated_at' => $now
-            ]);
+            $productInfo = $productInfo->groupBy('product_id')->map(function ($item, $index) {
+                $item->each(function ($price) use ($item) {
+                    if ($price['price'] != $item[0]['price']) {
+                        throw new \Exception('存在相同单品不同价格');
+                    }
+                });
 
-            $projectInfo = $projectInfo->groupBy('project_id')->map(function ($item, $index) use ($orderId, $now) {
                 return [
-                    'order_id'   => $orderId,
                     'product_id' => $index,
-                    'status'     => 1, //中国仓库
                     'quantity'   => $item->sum('quantity'),
-                    'created_at' => $now,
-                    'updated_at' => $now
+                    'price'      => round($item[0]['price'], 2),
                 ];
             });
 
-            Warehouse::insert($projectInfo->toArray());
+            Order::create([
+                'no'          => request()->input('no'),
+                'supplier_id' => request()->input('supplier_id'),
+                'product'     => $productInfo->values(),
+                'signing_at'  => request()->input('signing_at'),
+                'remark'      => request()->input('remark'),
+            ]);
             DB::commit();   //保存
 
             return $this->responseSuccess('添加成功');

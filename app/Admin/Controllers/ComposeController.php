@@ -124,14 +124,14 @@ class ComposeController extends ResponseController
         ]);
 
         $file = request()->file('images');
-        $projectInfo = request()->input('project_info');
-        $projectInfo = collect($projectInfo)->where('deleted', 'false')->where('project_id', '!=', null);
+        $productInfo = request()->input('product_info');
+        $productInfo = collect($productInfo)->where('deleted', 'false')->where('product_id', '!=', null);
 
-        if ($projectInfo->where('quantity', '<', 1)->count()) {
+        if ($productInfo->where('quantity', '<', 1)->count()) {
             return $this->setStatusCode(422)->responseError('单品数量必须大于0');
         }
 
-        if ($projectInfo->count() < 1) {
+        if ($productInfo->count() < 1) {
             return $this->setStatusCode(422)->responseError('必须添加单品');
         }
 
@@ -152,7 +152,7 @@ class ComposeController extends ResponseController
                 'updated_at' => $now
             ]);
 
-            $projectInfo = $projectInfo->groupBy('project_id')->map(function ($item, $index) use ($composeId, $now) {
+            $productInfo = $productInfo->groupBy('product_id')->map(function ($item, $index) use ($composeId, $now) {
                 return [
                     'compose_id' => $composeId,
                     'product_id' => $index,
@@ -162,7 +162,7 @@ class ComposeController extends ResponseController
                 ];
             });
 
-            ComposeProduct::insert($projectInfo->toArray());
+            ComposeProduct::insert($productInfo->toArray());
             DB::commit();   //保存
 
             return $this->responseSuccess('添加成功');

@@ -24,5 +24,10 @@ Route::group([
 
     //库存管理
     $router->resource('warehouses', WarehouseController::class);
+    $router->post('api/warehouses', 'WarehouseController@first');
 
+
+    //供货商
+    $router->resource('suppliers', SupplierController::class);
+    $router->get('api/supplier', 'SupplierController@supplier');
 });
