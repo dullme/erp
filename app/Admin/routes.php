@@ -25,9 +25,19 @@ Route::group([
     //库存管理
     $router->resource('warehouses', WarehouseController::class);
     $router->post('api/warehouses', 'WarehouseController@first');
+    $router->get('api/can-box', 'WarehouseController@canBox');
 
+    //装箱
+    $router->resource('packages', PackageController::class);
 
     //供货商
     $router->resource('suppliers', SupplierController::class);
     $router->get('api/supplier', 'SupplierController@supplier');
+
+    //货代
+    $router->resource('forwarding-companies', ForwardingCompanyController::class);
+    $router->get('api/forwarding-company', 'ForwardingCompanyController@forwardingCompany');
+
+    //仓储公司
+    $router->resource('warehouse-companies', WarehouseCompanyController::class);
 });

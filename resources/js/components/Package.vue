@@ -1,28 +1,97 @@
 <template>
-    <div>
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">创建</h3>
+
+            <div class="box-tools">
+                <div class="btn-group pull-right" style="margin-right: 5px">
+                    <a href="/admin/orders" class="btn btn-sm btn-default" title="列表"><i
+                        class="fa fa-list"></i><span class="hidden-xs">&nbsp;列表</span></a>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <!-- form start -->
         <form class="form-horizontal" @submit.prevent="submit" @keydown="errors.clear($event.target.name)">
             <div class="box-body">
                 <div class="fields-group">
 
                     <div class="col-md-12">
-                        <div class="form-group ">
-                            <label class="col-sm-2  control-label">订单编号</label>
+                        <div class="form-group " :class="{'has-error': this.errors.has('lading_number')}">
+                            <label class="col-sm-2  control-label">提单号</label>
                             <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('lading_number')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('lading_number') }}
+                                </label>
                                 <div class="input-group">
-                                    <span class="form-control">{{ no }}</span>
+                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                                    <input v-model="form_data.lading_number" type="text" class="form-control" placeholder="输入 提单号">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group " :class="{'has-error': this.errors.has('entry_at')}">
-                            <label class="col-sm-2  control-label">入库时间</label>
+                        <div class="form-group " :class="{'has-error': this.errors.has('container_number')}">
+                            <label class="col-sm-2  control-label">集装箱号</label>
                             <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('entry_at')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('entry_at') }}
+                                <label class="control-label" v-if="errors.has('container_number')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('container_number') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <input id="entry_at" v-model="form_data.entry_at" type="text" class="form-control datetime-picker" placeholder="入库时间">
+                                    <input v-model="form_data.container_number" type="text" class="form-control" placeholder="输入 集装箱号">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group " :class="{'has-error': this.errors.has('seal_number')}">
+                            <label class="col-sm-2  control-label">铅封号</label>
+                            <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('seal_number')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('seal_number') }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                                    <input v-model="form_data.seal_number" type="text" class="form-control" placeholder="输入 铅封号">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group " :class="{'has-error': this.errors.has('forwarding_company_id')}">
+                            <label class="col-sm-2  control-label">货代公司</label>
+                            <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('forwarding_company_id')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('forwarding_company_id') }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                                    <select class="form-control" id="forwarding_company" v-model="form_data.forwarding_company_id"> </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+<!--                        <div class="form-group " :class="{'has-error': this.errors.has('batch')}">-->
+<!--                            <label class="col-sm-2  control-label">生产批号</label>-->
+<!--                            <div class="col-sm-8">-->
+<!--                                <label class="control-label" v-if="errors.has('batch')">-->
+<!--                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('batch') }}-->
+<!--                                </label>-->
+<!--                                <div class="input-group">-->
+<!--                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>-->
+<!--                                    <input v-model="form_data.batch" type="text" class="form-control" placeholder="输入 生产批号">-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
+                        <div class="form-group " :class="{'has-error': this.errors.has('packaged_at')}">
+                            <label class="col-sm-2  control-label">装箱日</label>
+                            <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('packaged_at')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('packaged_at') }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                                    <input id="packaged_at" v-model="form_data.packaged_at" type="text" class="form-control datetime-picker" placeholder="装箱日">
                                 </div>
                             </div>
                         </div>
@@ -30,13 +99,12 @@
 
                         <div class="form-group  ">
                             <label class="col-sm-2  control-label">单品选择</label>
-                            <div class="col-sm-10">
+                            <div class="col-sm-8">
                                 <table class="table table-hover" id="table-fields">
                                     <tbody>
                                     <tr>
                                         <th>单品</th>
-                                        <th style="width: 100px">数量</th>
-                                        <th style="width: 100px">单价</th>
+                                        <th style="width: 100px">装箱数量</th>
                                         <th style="width: 100px">操作</th>
                                     </tr>
                                     <tr :id="'product_info'+product_info.id" v-for="(product_info) in form_data.product_info" :key="product_info.length">
@@ -44,12 +112,8 @@
                                             <select class="form-control" :id="'product_id' + product_info.id" v-model="product_info.id"> </select>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control numeric" value="1"
+                                            <input :id="'quantity'+product_info.id" type="text" class="form-control numeric" value="1"
                                                    @keyup="product_info.quantity = $event.target.value" placeholder="数量" >
-                                        </td>
-                                        <td>
-                                            <input :id="'price' + product_info.id" type="text" class="form-control decimal" value="0"
-                                                   @keyup="product_info.price = $event.target.value" placeholder="单价" >
                                         </td>
                                         <td><a class="btn btn-sm btn-danger table-field-remove" @click="deleteproduct(product_info.id)"><i class="fa fa-trash"></i> 删除</a></td>
                                     </tr>
@@ -69,16 +133,16 @@
                         </div>
 
 
-                        <!--                        <div class="form-group" :class="{'has-error': this.errors.has('images')}">-->
-                        <!--                            <label class="col-sm-2  control-label">文件上传</label>-->
-                        <!--                            <div class="col-sm-8">-->
-                        <!--                                <label class="control-label" v-if="errors.has('images')">-->
-                        <!--                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('images') }}-->
-                        <!--                                </label>-->
-                        <!--                                <input v-on:change="form_data.images" type="file" name="images[]"-->
-                        <!--                                       class="file-loading pictures" id="input-id" multiple="1"/>-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
+<!--                        <div class="form-group" :class="{'has-error': this.errors.has('images')}">-->
+<!--                            <label class="col-sm-2  control-label">文件上传</label>-->
+<!--                            <div class="col-sm-8">-->
+<!--                                <label class="control-label" v-if="errors.has('images')">-->
+<!--                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('images') }}-->
+<!--                                </label>-->
+<!--                                <input v-on:change="form_data.images" type="file" name="images[]"-->
+<!--                                       class="file-loading pictures" id="input-id" multiple="1"/>-->
+<!--                            </div>-->
+<!--                        </div>-->
 
 
 
@@ -117,28 +181,24 @@
             return {
                 errors: new Errors(),
                 form_data: {
-                    supplier_id: '',
-                    entry_at:Date.today().toString('yyyy-MM-dd'),
+                    lading_number: '',
+                    container_number: '',
+                    seal_number: '',
+                    forwarding_company_id: '',
+                    packaged_at:Date.today().toString('yyyy-MM-dd'),
                     images: [],  //图片
                     product_info:[], //单品
                 },
-                order_product:[],
                 product_info_count:0,
                 info_length:0,
                 edit_data: {
                     product:[],
-                    supplier_id:'',
+                    forwarding_company_id:'',
                     initialPreview: [],
                     initialPreviewConfig: [],
                 }
             }
         },
-
-        props: [
-            'order_id',
-            'no',
-            'product'
-        ],
 
         watch: {
             product_info_count(newVal, oldVal){
@@ -149,9 +209,6 @@
         },
 
         created() {
-            if(this.product){
-                this.order_product = JSON.parse(this.product);
-            }
             console.log('created')
         },
 
@@ -162,8 +219,8 @@
                 'locale': 'zh-CN',
                 'allowInputToggle': true
             });
-            $('#entry_at').on('dp.change', (e) => {
-                this.form_data.entry_at = e.currentTarget.value;
+            $('#packaged_at').on('dp.change', (e) => {
+                this.form_data.packaged_at = e.currentTarget.value;
             });
             this.supplierSelect2()
             this.pictures() //上传图片
@@ -187,23 +244,24 @@
             },
 
             supplierSelect2(){
-                Common.select(this.edit_data.supplier_id, "#supplier", "/admin/api/supplier", "name", "mobile", true, '请选择供应商');
-                $("#supplier").on("change", () => {
-                    this.form_data.supplier_id = parseInt($("#supplier").val());
+                Common.select(this.edit_data.supplier_id, "#forwarding_company", "/admin/api/forwarding-company", "name", "mobile", true, '请选择货代公司');
+                $("#forwarding_company").on("change", () => {
+                    this.form_data.forwarding_company_id = parseInt($("#forwarding_company").val());
                 });
             },
 
             productInfoSelect2(index){
                 this.$nextTick( ()=> {
-                    Common.select(this.edit_data.product, '#product_id' + index, "/admin/api/product", "name", "text", true, '请选输入关键字', 1, 'zh-CN',
+                    Common.select(this.edit_data.product, '#product_id' + index, "/admin/api/can-box", "name", "text", true, '请选输入关键字', 1, 'zh-CN',
                         function (repo) {
                             if (repo.loading) return '搜索中...';
                             let image = repo['image'] ? "/uploads/"+repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg'
                             let html =
                                 "<div style='display: flex'>" +
-                                "<div><img width='50px' height='50px' src='"+image+"'></div>" +
+                                "<div><img width='80px' height='80px' src='"+image+"'></div>" +
                                 "<div style='margin-left: 20px'>" +
-                                "<div>SKU：" + repo['text'] + "</div>" +
+                                "<div>库存：" + repo['warehouses_count'] + "</div>" +
+                                "<div>SKU：" + repo['sku'] + "</div>" +
                                 "<div>DDP：" + repo['ddp'] + "</div>" +
                                 "<div>描述：" + repo['description'] + "</div>" +
                                 "</div>" +
@@ -211,30 +269,28 @@
                             return html;
                         },
                         function (repo) {
+                            let text = repo.sku;
+
+                            if(repo['warehouses_count']){
+                                text += '【库存:'+repo['warehouses_count']+'】';
+                            }
+
                             if (repo['description']) {
                                 let description = repo['description'].length > 20 ? repo['description'].substr(0,20) + '...' : repo['description'];
 
-                                return repo['text'] + '：' + description;
+                                text += '：' + description;
                             }
 
-                            return repo.text;
+                            return text
                         }
                         , false);
 
                     $('#product_id' + index).on('change', (e) => {
                         this.errors.clear('product_info')
                         this.form_data.product_info.forEach((value, key)=>{
+
                             if(value.id == index){
-                                let id = e.target.value;
-                                this.form_data.product_info[key]['product_id'] = id;
-
-                                this.order_product.forEach((o_value, o_key) => {
-                                    if(o_value.id == id){
-                                        this.form_data.product_info[key]['price'] = o_value.price;
-                                        $('#price'+index).val(o_value.price)
-                                    }
-                                })
-
+                                this.$set(this.form_data.product_info[key], 'product_id', e.target.value);
                             }
                         })
                     });
@@ -259,17 +315,16 @@
                         return false;
                     }
 
-                    if(last_product_info['price'] <=0){
-                        this.setInfoMessage('product_info', '单价必须大于0')
-                        return false;
-                    }
+                    // if(last_product_info['price'] <=0){
+                    //     this.setInfoMessage('product_info', '单价必须大于0')
+                    //     return false;
+                    // }
                 }
 
                 this.form_data.product_info.push({
                     id:'l-' + (++this.info_length),
                     product_id:'',
                     quantity:1,
-                    price:0,
                     deleted:false
                 });
 
@@ -326,7 +381,6 @@
                         for(let i=0,len=this.form_data.product_info.length;i<len;i++){
                             form_data.append('product_info['+i+'][product_id]',this.form_data.product_info[i].product_id)
                             form_data.append('product_info['+i+'][quantity]',this.form_data.product_info[i].quantity)
-                            form_data.append('product_info['+i+'][price]',this.form_data.product_info[i].price)
                             form_data.append('product_info['+i+'][deleted]',this.form_data.product_info[i].deleted)
                         }
                     }else{
@@ -334,9 +388,7 @@
                     }
                 }
 
-                form_data.append('order_id', this.order_id)
-
-                let url = '/admin/api/warehouses'
+                let url = '/admin/packages/'
 
                 axios({
                     method: 'post',
@@ -350,7 +402,7 @@
                             response.data.message,
                             'success'
                         ).then(function () {
-                            location.reload()
+                            location.href = '/admin/packages';
                         });
                     }else{
                         toastr.error(response.data.data.message);

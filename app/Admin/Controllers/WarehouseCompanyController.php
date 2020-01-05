@@ -2,21 +2,20 @@
 
 namespace App\Admin\Controllers;
 
-use App\Product;
-use App\Supplier;
+use App\WarehouseCompany;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class SupplierController extends AdminController
+class WarehouseCompanyController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = '供应商';
+    protected $title = '仓储公司';
 
     /**
      * Make a grid builder.
@@ -25,7 +24,7 @@ class SupplierController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new Supplier);
+        $grid = new Grid(new WarehouseCompany);
         $grid->model()->orderByDesc('id');
         $grid->disableExport();
         $grid->disableRowSelector();
@@ -46,7 +45,7 @@ class SupplierController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Supplier::findOrFail($id));
+        $show = new Show(WarehouseCompany::findOrFail($id));
 
         $show->field('name', __('名称'));
         $show->field('mobile', __('电话'));
@@ -63,20 +62,12 @@ class SupplierController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new Supplier);
+        $form = new Form(new WarehouseCompany);
 
         $form->text('name', __('名称'));
         $form->mobile('mobile', __('电话'));
         $form->text('address', __('地址'));
 
         return $form;
-    }
-
-    public function supplier()
-    {
-        $q = request()->input('q');
-        $products = Supplier::where('name', 'like', '%'.$q.'%')->get();
-
-        return response()->json($products);
     }
 }

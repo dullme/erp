@@ -23,7 +23,7 @@ class OrderController extends ResponseController
      *
      * @var string
      */
-    protected $title = '订单管理';
+    protected $title = '订购入库';
 
     /**
      * Make a grid builder.
@@ -34,6 +34,8 @@ class OrderController extends ResponseController
     {
         $grid = new Grid(new Order);
 
+        $grid->model()->orderByDesc('id');
+
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
             $filter->equal('no', '订单编号');
@@ -42,10 +44,13 @@ class OrderController extends ResponseController
         });
 
 //        $grid->column('id', __('ID'));
-        $grid->column('no', __('订单编号'));
+        $grid->column('no', __('订单编号'))->display(function (){
+            $url = url('/admin/orders/'.$this->id);
+            return "<a href='{$url}'>{$this->no}</a>";
+        });
         $grid->supplier()->name('供应商');
         $grid->column('signing_at', __('签订日'));
-        $grid->column('remark', __('备注'));
+//        $grid->column('remark', __('备注'));
 //        $grid->column('created_at', __('添加时间'));
 //        $grid->column('updated_at', __('Updated at'));
 
@@ -85,12 +90,12 @@ class OrderController extends ResponseController
 
             return array_merge($res, [
                 'batch'      => $item['batch'],
-                'created_at' => $item['created_at'],
+                'entry_at' => $item['entry_at'],
                 'quantity'   => $item['quantity'],
                 'price'      => bigNumber($item['price'])->getValue(),
                 'total'      => bigNumber($item['quantity'] * $item['price'])->getValue()
             ]);
-        })->groupBy('batch');
+        })->groupBy('batch')->reverse();
 
         return view('order', compact('order'));
     }

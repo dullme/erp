@@ -28,10 +28,11 @@
             </div>
         </div>
 
-        <div class="panel panel-info">
-            <div class="panel-heading">原始订单</div>
-            <table class="table table-bordered text-center">
-                <thead>
+        <div class="col-lg-8 col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">订单</div>
+                <table class="table table-bordered text-center">
+                    <thead>
                     <tr>
                         <th>图片</th>
                         <th>SKU</th>
@@ -39,8 +40,8 @@
                         <th>单价</th>
                         <th>合计</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     @foreach($order['product'] as $item)
                         <tr>
                             <td>
@@ -55,53 +56,55 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="4" ></td>
+                        <td colspan="4"></td>
                         <td> {{ bigNumber(collect($order['product'])->sum('total'))->getValue() }}</td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         @if($order->product_batch)
-            @foreach($order->product_batch as $key=>$product)
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <span>第 {{ $key }} 次入库记录</span>
-                        <span style="float: right">入库时间：{{ $product[0]['created_at'] }}</span>
-                    </div>
-                    <table class="table table-bordered text-center">
-                        <thead>
-                        <tr>
-                            <th>图片</th>
-                            <th>SKU</th>
-                            <th>数量</th>
-                            <th>单价</th>
-                            <th>合计</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($product as $item)
+            <div class="col-lg-8 col-md-12">
+                @foreach($order->product_batch as $key=>$product)
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <span>第 {{ $key }} 次入库记录</span>
+                            <span style="float: right">入库时间：{{ substr($product[0]['entry_at'],0, 10) }}</span>
+                        </div>
+                        <table class="table table-bordered text-center">
+                            <thead>
                             <tr>
-                                <td>
-                                    @if($item['image'])
-                                        <img width="100" src="{{ asset('uploads/'.$item['image']) }}">
-                                    @endif
-                                </td>
-                                <td>{{ $item['sku'] }}</td>
-                                <td>{{ $item['quantity'] }}</td>
-                                <td>{{ $item['price'] }}</td>
-                                <td>{{ $item['total'] }}</td>
+                                <th>图片</th>
+                                <th>SKU</th>
+                                <th>数量</th>
+                                <th>单价</th>
+                                <th>合计</th>
                             </tr>
-                        @endforeach
-                        <tr>
-                            <td colspan="4" ></td>
-                            <td> {{ bigNumber(collect($product)->sum('total'))->getValue() }}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            @endforeach
+                            </thead>
+                            <tbody>
+                            @foreach($product as $item)
+                                <tr>
+                                    <td>
+                                        @if($item['image'])
+                                            <img width="100" src="{{ asset('uploads/'.$item['image']) }}">
+                                        @endif
+                                    </td>
+                                    <td>{{ $item['sku'] }}</td>
+                                    <td>{{ $item['quantity'] }}</td>
+                                    <td>{{ $item['price'] }}</td>
+                                    <td>{{ $item['total'] }}</td>
+                                </tr>
+                            @endforeach
+                            <tr>
+                                <td colspan="4"></td>
+                                <td> {{ bigNumber(collect($product)->sum('total'))->getValue() }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                @endforeach
+            </div>
         @endif
 
 
@@ -118,7 +121,8 @@
                 <h4 class="modal-title">验货入库</h4>
             </div>
             <div class="modal-body">
-                <warehouse no="{{ $order->no }}" order_id="{{ $order->id }}" product="{{json_encode($order['product'])}}"></warehouse>
+                <warehouse no="{{ $order->no }}" order_id="{{ $order->id }}"
+                           product="{{json_encode($order['product'])}}"></warehouse>
             </div>
         </div>
         <!-- /.modal-content -->

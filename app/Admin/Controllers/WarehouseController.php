@@ -74,13 +74,17 @@ class WarehouseController extends ResponseController
     public function first()
     {
         request()->validate([
-            'order_id' => 'required|',
+            'order_id' => 'required',
+            'entry_at' => 'required|date:Y-m-d',
         ], [
             'order_id.required' => '缺少必要参数',
+            'entry_at.required' => '请选择入库时间',
+            'entry_at.date'     => '时间格式错误',
         ]);
 
 //        $file = request()->file('images');
         $productInfo = request()->input('product_info');
+        $entry_at = Carbon::parse(request()->input('entry_at'));
         $productInfo = collect($productInfo)->where('deleted', 'false')->where('product_id', '!=', null);
 
         if ($productInfo->where('quantity', '<', 1)->count()) {
@@ -106,35 +110,43 @@ class WarehouseController extends ResponseController
             $order = Order::findOrfail(request()->input('order_id'));
             $batch = $order->batch + 1;
 
-            $productBatch = $productInfo->map(function ($item) use($batch, $now){
+            $productBatch = $productInfo->map(function ($item) use ($batch, $entry_at) {
                 $item['batch'] = $batch;
-                $item['created_at'] = $now;
+                $item['entry_at'] = $entry_at->toDateTimeString();
                 unset($item['deleted']);
+
                 return $item;
             })->toArray();
 
-            $productInfo = $productInfo->groupBy('product_id')->map(function ($item, $index) use ($order, $now, $batch) {
+            $product_ids = $productInfo->pluck('product_id')->toArray();
+            $real_product = Product::select('id', 'sku', 'image')->find($product_ids);
+
+            $productInfo = $productInfo->groupBy('product_id')->map(function ($item, $index) use ($order, $now, $batch, $real_product, $entry_at) {
                 $item->each(function ($price) use ($item) {
                     if ($price['price'] != $item[0]['price']) {
                         throw new \Exception('存在相同单品不同价格');
                     }
                 });
 
+                $real_pro = $real_product->where('id', $index)->first();
+
                 return [
-                    'order_id'    => $order->id,
-                    'order_batch' => $batch,
-                    'product_id'  => $index,
-                    'quantity'    => $item->sum('quantity'),
-                    'status'      => 1,
-                    'created_at'  => $now,
-                    'updated_at'  => $now,
+                    'order_id'     => $order->id,
+                    'order_batch'  => $batch,
+                    'batch_number' => "{$order->no}-{$real_pro->sku}-{$batch}-{$entry_at->weekOfYear}",
+                    'product_id'   => $index,
+                    'quantity'     => $item->sum('quantity'),
+                    'status'       => 1,
+                    'entry_at'     => $entry_at->toDateTimeString(),
+                    'created_at'   => $now,
+                    'updated_at'   => $now,
                 ];
             });
 
             $order->batch = $batch;
-            if($order->product_batch != null){
+            if ($order->product_batch != null) {
                 $order->product_batch = array_merge($order->product_batch, $productBatch);
-            }else{
+            } else {
                 $order->product_batch = $productBatch;
             }
 
@@ -151,5 +163,28 @@ class WarehouseController extends ResponseController
 
             return $this->setStatusCode(422)->responseError($exception->getMessage());
         }
+    }
+
+
+    public function canBox()
+    {
+        $q = request()->input('q');
+
+        $products = Product::where('sku', 'like', '%' . $q . '%')
+            ->orWhere('description', 'like', '%' . $q . '%')
+            ->with('warehouses')
+            ->select('id', 'sku', 'description', 'ddp', 'image')->get();
+
+        $products = $products->map(function ($item) {
+            $count = $item->warehouses->where('status', 1)->sum('quantity');
+            $item['warehouses_count'] = $count;
+            $item['text'] = $count;
+            $item['disabled'] = !(boolean) $count;
+            unset($item->warehouses);
+
+            return $item;
+        });
+
+        return response()->json($products);
     }
 }
