@@ -44,7 +44,7 @@
                                             <select class="form-control" :id="'product_id' + product_info.id" v-model="product_info.id"> </select>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control numeric" value="1"
+                                            <input type="number" class="form-control" value="1"
                                                    @keyup="product_info.quantity = $event.target.value" placeholder="数量" >
                                         </td>
                                         <td>
