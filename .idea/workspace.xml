@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9dd538f9-68bf-44f8-9acc-19f55716d661" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/erp_2020-01-07.sql" beforeDir="false" afterPath="$PROJECT_DIR$/erp_2020-01-07.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/admin.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/js/components/Order.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Order.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/js/components/Package.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Package.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/js/components/Warehouse.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Warehouse.vue" afterDir="false" />
@@ -218,7 +216,7 @@
       <workItem from="1578123139649" duration="420000" />
       <workItem from="1578125503870" duration="46000" />
       <workItem from="1578125929572" duration="134000" />
-      <workItem from="1578141896179" duration="64700000" />
+      <workItem from="1578141896179" duration="64938000" />
     </task>
     <servers />
   </component>
@@ -252,11 +250,11 @@
     </state>
     <state x="0" y="0" key="SettingsEditor/0.0.1280.800@0.0.1280.800" timestamp="1576171557486" />
     <state x="0" y="0" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1576676721602" />
-    <state width="801" height="600" key="SwitcherDM" timestamp="1578404940654">
+    <state width="801" height="600" key="SwitcherDM" timestamp="1578408125520">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state width="750" height="600" key="SwitcherDM/0.0.1280.800@0.0.1280.800" timestamp="1577280216539" />
-    <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1578404940654" />
+    <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1578408125520" />
     <state x="364" y="130" width="1192" height="820" key="find.popup" timestamp="1578404820551">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

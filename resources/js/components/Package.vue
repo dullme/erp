@@ -112,7 +112,7 @@
                                             <select class="form-control" :id="'product_id' + product_info.id" v-model="product_info.id"> </select>
                                         </td>
                                         <td>
-                                            <input :id="'quantity'+product_info.id" type="number" class="form-control" value="1"
+                                            <input :id="'quantity'+product_info.id" type="text" class="form-control numeric" value="1"
                                                    @keyup="product_info.quantity = $event.target.value" placeholder="数量" >
                                         </td>
                                         <td><a class="btn btn-sm btn-danger table-field-remove" @click="deleteproduct(product_info.id)"><i class="fa fa-trash"></i> 删除</a></td>
