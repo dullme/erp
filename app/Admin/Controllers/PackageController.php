@@ -232,7 +232,8 @@ class PackageController extends ResponseController
                                 "package_id" => $package->id,
                             ]);
                             $now_quantity -= $oneWarehouse['quantity']; //减少总需要的货物
-                        } else {
+                        }
+                        else {
                             if ($oneWarehouse['quantity'] == $now_quantity) {
                                 //如果当前和所需货物刚好一致则更新
                                 Warehouse::where('id', $oneWarehouse['id'])->update([
@@ -241,7 +242,7 @@ class PackageController extends ResponseController
                                 ]);
                             } else { //大于本次装柜所需
                                 Warehouse::where('id', $oneWarehouse['id'])->update([
-                                    'quantity' => $oneWarehouse['quantity'] - $item['quantity']
+                                    'quantity' => $oneWarehouse['quantity'] - $now_quantity
                                 ]);//减少原来的数量
                                 Warehouse::create([
                                     "order_id"     => $oneWarehouse['order_id'],
@@ -250,7 +251,7 @@ class PackageController extends ResponseController
                                     "batch_number" => $oneWarehouse['batch_number'],
                                     "product_id"   => $oneWarehouse['product_id'],
                                     "status"       => 2,
-                                    "quantity"     => $item['quantity'],
+                                    "quantity"     => $now_quantity,
                                     "entry_at"     => $oneWarehouse['entry_at'],
                                 ]); //新增海上仓的数量
                             }
