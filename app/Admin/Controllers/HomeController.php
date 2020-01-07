@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use Session;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Layout\Column;
@@ -10,6 +11,7 @@ use Encore\Admin\Layout\Row;
 
 class HomeController extends Controller
 {
+
     public function index(Content $content)
     {
         return $content
@@ -30,5 +32,25 @@ class HomeController extends Controller
                     $column->append(Dashboard::dependencies());
                 });
             });
+    }
+
+    public function changeHq()
+    {
+        $hq = request()->input('hq');
+
+
+        Session::put('hq', $hq);
+
+        return response()->json(Session::all());
+    }
+
+    public function changeUnit()
+    {
+        $unit = request()->input('unit');
+
+
+        Session::put('unit', $unit);
+
+        return response()->json(Session::all());
     }
 }

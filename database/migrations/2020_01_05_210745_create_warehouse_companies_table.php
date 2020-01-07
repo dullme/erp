@@ -18,6 +18,7 @@ class CreateWarehouseCompaniesTable extends Migration
             $table->string('name')->unique()->comment('名称');
             $table->string('mobile')->nullable()->comment('电话');
             $table->string('address')->nullable()->comment('地址');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

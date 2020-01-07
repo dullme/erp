@@ -98,7 +98,7 @@
                 }).catch(error => {
                     swal(
                         "INFO",
-                        '粗错啦！',
+                        '出错啦！',
                         'info'
                     )
                 });

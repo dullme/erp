@@ -18,7 +18,6 @@ class CreateComposeProductsTable extends Migration
             $table->integer('compose_id')->unsigned()->comment('所属组合');
             $table->integer('product_id')->unsigned()->comment('所属产品');
             $table->integer('quantity')->comment('数量');
-            $table->integer('hq')->comment('hq');
             $table->timestamps();
         });
     }

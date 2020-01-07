@@ -17,7 +17,9 @@ class CreateComposesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->unique()->comment('名称');
             $table->string('asin')->unique();
+            $table->string('hq')->nullable()->nullable();
             $table->string('image')->nullable()->comment('图片');
+            $table->longText('content')->nullable()->comment('详情');
             $table->timestamps();
         });
     }

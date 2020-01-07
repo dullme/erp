@@ -11,6 +11,8 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('admin.home');
+    $router->post('/api/change-hq', 'HomeController@changeHq');
+    $router->post('/api/change-unit', 'HomeController@changeUnit');
 
     //单品管理
     $router->resource('products', ProductController::class);
@@ -18,6 +20,7 @@ Route::group([
 
     //组合管理
     $router->resource('composes', ComposeController::class);
+    $router->post('api/compose', 'ComposeController@compose');
 
     //订单管理
     $router->resource('orders', OrderController::class);

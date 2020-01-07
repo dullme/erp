@@ -1980,6 +1980,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -1987,26 +2000,27 @@ __webpack_require__.r(__webpack_exports__);
     return {
       errors: new _core_Errors__WEBPACK_IMPORTED_MODULE_1__["default"](),
       form_data: {
-        name: '222',
-        asin: '333',
+        hq: '0',
+        name: '',
+        asin: '',
         images: [],
         //图片
-        project_info: [] //单品
+        product_info: [] //单品
 
       },
-      project_info_count: 0,
+      product_info_count: 0,
       info_length: 0,
       edit_data: {
-        project: [],
+        product: [],
         initialPreview: [],
         initialPreviewConfig: []
       }
     };
   },
   watch: {
-    project_info_count: function project_info_count(newVal, oldVal) {
+    product_info_count: function product_info_count(newVal, oldVal) {
       if (newVal > oldVal) {
-        this.projectInfoSelect2('l-' + this.info_length);
+        this.productInfoSelect2('l-' + this.info_length);
       }
     }
   },
@@ -2018,27 +2032,27 @@ __webpack_require__.r(__webpack_exports__);
     this.pictures(); //上传图片
   },
   methods: {
-    deleteProject: function deleteProject(length) {
+    deleteproduct: function deleteproduct(length) {
       var _this = this;
 
       console.log(length);
-      this.errors.clear('project_info');
-      this.form_data.project_info.forEach(function (value, index) {
+      this.errors.clear('product_info');
+      this.form_data.product_info.forEach(function (value, index) {
         if (value.id == length) {
-          $('#project_info' + value.id).remove();
-          _this.form_data.project_info[index].deleted = true; // this.$delete(this.form_data.project_info, index)
+          $('#product_info' + value.id).remove();
+          _this.form_data.product_info[index].deleted = true; // this.$delete(this.form_data.product_info, index)
         }
-      }); // this.form_data.project_info.forEach((value)=>{
-      //     this.projectInfoSelect2(value.id)
+      }); // this.form_data.product_info.forEach((value)=>{
+      //     this.productInfoSelect2(value.id)
       // })
 
-      this.project_info_count = this.form_data.project_info.length;
+      this.product_info_count = this.form_data.product_info.length;
     },
-    projectInfoSelect2: function projectInfoSelect2(index) {
+    productInfoSelect2: function productInfoSelect2(index) {
       var _this2 = this;
 
       this.$nextTick(function () {
-        _util__WEBPACK_IMPORTED_MODULE_0__["default"].select(_this2.edit_data.project, '#project_id' + index, "/admin/api/product", "name", "text", true, '请选输入关键字', 1, 'zh-CN', function (repo) {
+        _util__WEBPACK_IMPORTED_MODULE_0__["default"].select(_this2.edit_data.product, '#product_id' + index, "/admin/api/product", "name", "text", true, '请选输入关键字', 1, 'zh-CN', function (repo) {
           if (repo.loading) return '搜索中...';
           var image = repo['image'] ? "/uploads/" + repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg';
           var html = "<div style='display: flex'>" + "<div><img width='80px' height='80px' src='" + image + "'></div>" + "<div style='margin-left: 20px'>" + "<div>SKU：" + repo['text'] + "</div>" + "<div>DDP：" + repo['ddp'] + "</div>" + "<div>描述：" + repo['description'] + "</div>" + "</div>" + "</div>";
@@ -2051,43 +2065,43 @@ __webpack_require__.r(__webpack_exports__);
 
           return repo.text;
         }, false);
-        $('#project_id' + index).on('change', function (e) {
-          _this2.errors.clear('project_info');
+        $('#product_id' + index).on('change', function (e) {
+          _this2.errors.clear('product_info');
 
-          _this2.form_data.project_info.forEach(function (value, key) {
+          _this2.form_data.product_info.forEach(function (value, key) {
             if (value.id == index) {
-              _this2.form_data.project_info[key]['project_id'] = e.target.value;
+              _this2.form_data.product_info[key]['product_id'] = e.target.value;
             }
           });
         });
-        $('#project_info' + index + ' .numeric').inputmask({
+        $('#product_info' + index + ' .numeric').inputmask({
           "alias": "integer"
         });
       });
     },
-    addProject: function addProject() {
-      this.errors.clear('project_info');
-      var last_project_info = this.form_data.project_info[this.form_data.project_info.length - 1];
+    addproduct: function addproduct() {
+      this.errors.clear('product_info');
+      var last_product_info = this.form_data.product_info[this.form_data.product_info.length - 1];
 
-      if (last_project_info) {
-        if (!last_project_info['project_id']) {
-          this.setInfoMessage('project_info', '请选择单品');
+      if (last_product_info) {
+        if (!last_product_info['product_id']) {
+          this.setInfoMessage('product_info', '请选择单品');
           return false;
         }
 
-        if (last_project_info['quantity'] <= 0) {
-          this.setInfoMessage('project_info', '数量必须大于0');
+        if (last_product_info['quantity'] <= 0) {
+          this.setInfoMessage('product_info', '数量必须大于0');
           return false;
         }
       }
 
-      this.form_data.project_info.push({
+      this.form_data.product_info.push({
         id: 'l-' + ++this.info_length,
-        project_id: '',
+        product_id: '',
         quantity: 1,
         deleted: false
       });
-      this.project_info_count = this.form_data.project_info.length;
+      this.product_info_count = this.form_data.product_info.length;
     },
     setInfoMessage: function setInfoMessage(id, text) {
       $('#' + id + '_message').html(text);
@@ -2138,11 +2152,11 @@ __webpack_require__.r(__webpack_exports__);
           for (var j in this.form_data.images) {
             form_data.append('images[]', this.form_data.images[j]);
           }
-        } else if (i == 'project_info') {
-          for (var _i = 0, len = this.form_data.project_info.length; _i < len; _i++) {
-            form_data.append('project_info[' + _i + '][project_id]', this.form_data.project_info[_i].project_id);
-            form_data.append('project_info[' + _i + '][quantity]', this.form_data.project_info[_i].quantity);
-            form_data.append('project_info[' + _i + '][deleted]', this.form_data.project_info[_i].deleted);
+        } else if (i == 'product_info') {
+          for (var _i = 0, len = this.form_data.product_info.length; _i < len; _i++) {
+            form_data.append('product_info[' + _i + '][product_id]', this.form_data.product_info[_i].product_id);
+            form_data.append('product_info[' + _i + '][quantity]', this.form_data.product_info[_i].quantity);
+            form_data.append('product_info[' + _i + '][deleted]', this.form_data.product_info[_i].deleted);
           }
         } else {
           form_data.append(i, this.form_data[i]);
@@ -21827,11 +21841,63 @@ var render = function() {
                 "div",
                 {
                   staticClass: "form-group ",
+                  class: { "has-error": this.errors.has("hq") }
+                },
+                [
+                  _c("label", { staticClass: "col-sm-2  control-label" }, [
+                    _vm._v("HQ")
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-8" }, [
+                    _vm.errors.has("hq")
+                      ? _c("label", { staticClass: "control-label" }, [
+                          _c("i", { staticClass: "fa fa-times-circle-o" }),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.errors.get("hq")) +
+                              "\n                            "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "input-group" }, [
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.form_data.hq,
+                            expression: "form_data.hq"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text", placeholder: "输入 HQ" },
+                        domProps: { value: _vm.form_data.hq },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.form_data, "hq", $event.target.value)
+                          }
+                        }
+                      })
+                    ])
+                  ])
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass: "form-group ",
                   class: { "has-error": this.errors.has("asin") }
                 },
                 [
                   _c("label", { staticClass: "col-sm-2  control-label" }, [
-                    _vm._v("ASIN")
+                    _vm._v("ASKU")
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-sm-8" }, [
@@ -21847,7 +21913,7 @@ var render = function() {
                       : _vm._e(),
                     _vm._v(" "),
                     _c("div", { staticClass: "input-group" }, [
-                      _vm._m(2),
+                      _vm._m(3),
                       _vm._v(" "),
                       _c("input", {
                         directives: [
@@ -21859,7 +21925,7 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text", placeholder: "输入 ASIN" },
+                        attrs: { type: "text", placeholder: "输入 ASKU" },
                         domProps: { value: _vm.form_data.asin },
                         on: {
                           input: function($event) {
@@ -21928,16 +21994,16 @@ var render = function() {
                       _c(
                         "tbody",
                         [
-                          _vm._m(3),
+                          _vm._m(4),
                           _vm._v(" "),
-                          _vm._l(_vm.form_data.project_info, function(
-                            project_info
+                          _vm._l(_vm.form_data.product_info, function(
+                            product_info
                           ) {
                             return _c(
                               "tr",
                               {
-                                key: project_info.length,
-                                attrs: { id: "project_info" + project_info.id }
+                                key: product_info.length,
+                                attrs: { id: "product_info" + product_info.id }
                               },
                               [
                                 _c("td", [
@@ -21946,13 +22012,13 @@ var render = function() {
                                       {
                                         name: "model",
                                         rawName: "v-model",
-                                        value: project_info.id,
-                                        expression: "project_info.id"
+                                        value: product_info.id,
+                                        expression: "product_info.id"
                                       }
                                     ],
                                     staticClass: "form-control",
                                     attrs: {
-                                      id: "project_id" + project_info.id
+                                      id: "product_id" + product_info.id
                                     },
                                     on: {
                                       change: function($event) {
@@ -21968,7 +22034,7 @@ var render = function() {
                                             return val
                                           })
                                         _vm.$set(
-                                          project_info,
+                                          product_info,
                                           "id",
                                           $event.target.multiple
                                             ? $$selectedVal
@@ -21985,8 +22051,8 @@ var render = function() {
                                       {
                                         name: "model",
                                         rawName: "v-model",
-                                        value: project_info.quantity,
-                                        expression: "project_info.quantity"
+                                        value: product_info.quantity,
+                                        expression: "product_info.quantity"
                                       }
                                     ],
                                     staticClass: "form-control numeric",
@@ -21994,10 +22060,10 @@ var render = function() {
                                       type: "text",
                                       placeholder: "数量"
                                     },
-                                    domProps: { value: project_info.quantity },
+                                    domProps: { value: product_info.quantity },
                                     on: {
                                       keyup: function($event) {
-                                        project_info.quantity =
+                                        product_info.quantity =
                                           $event.target.value
                                       },
                                       input: function($event) {
@@ -22005,7 +22071,7 @@ var render = function() {
                                           return
                                         }
                                         _vm.$set(
-                                          project_info,
+                                          product_info,
                                           "quantity",
                                           $event.target.value
                                         )
@@ -22022,8 +22088,8 @@ var render = function() {
                                         "btn btn-sm btn-danger table-field-remove",
                                       on: {
                                         click: function($event) {
-                                          return _vm.deleteProject(
-                                            project_info.id
+                                          return _vm.deleteproduct(
+                                            product_info.id
                                           )
                                         }
                                       }
@@ -22058,7 +22124,7 @@ var render = function() {
                           {
                             staticClass: "btn btn-sm btn-success",
                             attrs: { type: "button", id: "add-table-field" },
-                            on: { click: _vm.addProject }
+                            on: { click: _vm.addproduct }
                           },
                           [
                             _c("i", { staticClass: "fa fa-plus" }),
@@ -22070,12 +22136,12 @@ var render = function() {
                         _vm._v(" "),
                         _c("span", {
                           staticClass: "text-danger",
-                          attrs: { id: "project_info_message" }
+                          attrs: { id: "product_info_message" }
                         }),
                         _vm._v(" "),
-                        this.errors.has("project_info")
+                        this.errors.has("product_info")
                           ? _c("span", { staticClass: "text-danger" }, [
-                              _vm._v(_vm._s(this.errors.get("project_info")))
+                              _vm._v(_vm._s(this.errors.get("product_info")))
                             ])
                           : _vm._e()
                       ])
@@ -22087,7 +22153,7 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _vm._m(4)
+        _vm._m(5)
       ]
     )
   ])
@@ -22122,6 +22188,14 @@ var staticRenderFns = [
           ]
         )
       ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "input-group-addon" }, [
+      _c("i", { staticClass: "fa fa-pencil fa-fw" })
     ])
   },
   function() {

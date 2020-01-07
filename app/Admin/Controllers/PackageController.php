@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\ForwardingCompany;
 use App\Package;
 use App\Product;
 use App\Warehouse;
@@ -43,6 +44,15 @@ class PackageController extends ResponseController
     {
         $grid = new Grid(new Package);
         $grid->model()->orderByDesc('id');
+
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $filter->equal('lading_number', '提单号');
+            $filter->equal('container_number', '集装箱号');
+            $filter->equal('seal_number', '铅封号');
+            $forwardingCompany = ForwardingCompany::pluck('name', 'id');
+            $filter->equal('forwarding_company_id', '货代公司')->select($forwardingCompany);
+        });
 
         $grid->column('lading_number', __('提单号'))->display(function (){
             $url = url('/admin/packages/'.$this->id);

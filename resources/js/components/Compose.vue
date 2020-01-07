@@ -32,15 +32,28 @@
                             </div>
                         </div>
 
+                        <div class="form-group " :class="{'has-error': this.errors.has('hq')}">
+                            <label class="col-sm-2  control-label">HQ</label>
+                            <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('hq')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('hq') }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                                    <input v-model="form_data.hq" type="text" class="form-control" placeholder="输入 HQ">
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group " :class="{'has-error': this.errors.has('asin')}">
-                            <label class="col-sm-2  control-label">ASIN</label>
+                            <label class="col-sm-2  control-label">ASKU</label>
                             <div class="col-sm-8">
                                 <label class="control-label" v-if="errors.has('asin')">
                                     <i class="fa fa-times-circle-o"></i> {{ errors.get('asin') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <input v-model="form_data.asin" type="text" class="form-control" placeholder="输入 ASIN">
+                                    <input v-model="form_data.asin" type="text" class="form-control" placeholder="输入 ASKU">
                                 </div>
                             </div>
                         </div>
@@ -66,27 +79,27 @@
                                             <th style="width: 100px">数量</th>
                                             <th style="width: 100px">操作</th>
                                         </tr>
-                                        <tr :id="'project_info'+project_info.id" v-for="(project_info) in form_data.project_info" :key="project_info.length">
+                                        <tr :id="'product_info'+product_info.id" v-for="(product_info) in form_data.product_info" :key="product_info.length">
                                             <td>
-                                                <select class="form-control" :id="'project_id' + project_info.id" v-model="project_info.id"> </select>
+                                                <select class="form-control" :id="'product_id' + product_info.id" v-model="product_info.id"> </select>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control numeric"
-                                                       @keyup="project_info.quantity = $event.target.value;"
-                                                       v-model="project_info.quantity" placeholder="数量" >
+                                                       @keyup="product_info.quantity = $event.target.value;"
+                                                       v-model="product_info.quantity" placeholder="数量" >
                                             </td>
-                                            <td><a class="btn btn-sm btn-danger table-field-remove" @click="deleteProject(project_info.id)"><i class="fa fa-trash"></i> 删除</a></td>
+                                            <td><a class="btn btn-sm btn-danger table-field-remove" @click="deleteproduct(product_info.id)"><i class="fa fa-trash"></i> 删除</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <hr style="margin-top: 0;">
                                 <div class="form-inline margin" style="width: 100%">
                                     <div class="form-group">
-                                        <button type="button" @click="addProject" class="btn btn-sm btn-success" id="add-table-field">
+                                        <button type="button" @click="addproduct" class="btn btn-sm btn-success" id="add-table-field">
                                             <i class="fa fa-plus"></i>&nbsp;&nbsp;添加
                                         </button>
-                                        <span class="text-danger" id="project_info_message"></span>
-                                        <span class="text-danger" v-if="this.errors.has('project_info')">{{ this.errors.get('project_info') }}</span>
+                                        <span class="text-danger" id="product_info_message"></span>
+                                        <span class="text-danger" v-if="this.errors.has('product_info')">{{ this.errors.get('product_info') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -125,15 +138,16 @@
             return {
                 errors: new Errors(),
                 form_data: {
-                    name: '222',
-                    asin: '333',
+                    hq: '0',
+                    name: '',
+                    asin: '',
                     images: [],  //图片
-                    project_info:[], //单品
+                    product_info:[], //单品
                 },
-                project_info_count:0,
+                product_info_count:0,
                 info_length:0,
                 edit_data: {
-                    project:[],
+                    product:[],
                     initialPreview: [],
                     initialPreviewConfig: [],
                 }
@@ -141,9 +155,9 @@
         },
 
         watch: {
-            project_info_count(newVal, oldVal){
+            product_info_count(newVal, oldVal){
                 if(newVal > oldVal){
-                    this.projectInfoSelect2('l-'+this.info_length)
+                    this.productInfoSelect2('l-'+this.info_length)
                 }
             }
         },
@@ -158,25 +172,25 @@
         },
 
         methods: {
-            deleteProject(length){
+            deleteproduct(length){
                 console.log(length)
-                this.errors.clear('project_info')
-                this.form_data.project_info.forEach((value, index)=>{
+                this.errors.clear('product_info')
+                this.form_data.product_info.forEach((value, index)=>{
                     if(value.id == length){
-                        $('#project_info'+value.id).remove()
-                        this.form_data.project_info[index].deleted = true;
-                        // this.$delete(this.form_data.project_info, index)
+                        $('#product_info'+value.id).remove()
+                        this.form_data.product_info[index].deleted = true;
+                        // this.$delete(this.form_data.product_info, index)
                     }
                 })
-                // this.form_data.project_info.forEach((value)=>{
-                //     this.projectInfoSelect2(value.id)
+                // this.form_data.product_info.forEach((value)=>{
+                //     this.productInfoSelect2(value.id)
                 // })
-                this.project_info_count = this.form_data.project_info.length
+                this.product_info_count = this.form_data.product_info.length
             },
 
-            projectInfoSelect2(index){
+            productInfoSelect2(index){
                 this.$nextTick( ()=> {
-                    Common.select(this.edit_data.project, '#project_id' + index, "/admin/api/product", "name", "text", true, '请选输入关键字', 1, 'zh-CN',
+                    Common.select(this.edit_data.product, '#product_id' + index, "/admin/api/product", "name", "text", true, '请选输入关键字', 1, 'zh-CN',
                         function (repo) {
                             if (repo.loading) return '搜索中...';
                             let image = repo['image'] ? "/uploads/"+repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg'
@@ -202,44 +216,44 @@
                         }
                         , false);
 
-                    $('#project_id' + index).on('change', (e) => {
-                        this.errors.clear('project_info')
-                        this.form_data.project_info.forEach((value, key)=>{
+                    $('#product_id' + index).on('change', (e) => {
+                        this.errors.clear('product_info')
+                        this.form_data.product_info.forEach((value, key)=>{
                             if(value.id == index){
-                                this.form_data.project_info[key]['project_id'] = e.target.value;
+                                this.form_data.product_info[key]['product_id'] = e.target.value;
                             }
                         })
                     });
 
-                    $('#project_info' + index + ' .numeric').inputmask({
+                    $('#product_info' + index + ' .numeric').inputmask({
                         "alias": "integer",
                     });
                 })
             },
 
-            addProject(){
-                this.errors.clear('project_info')
-                let last_project_info = this.form_data.project_info[this.form_data.project_info.length -1]
-                if(last_project_info){
-                    if(!last_project_info['project_id']){
-                        this.setInfoMessage('project_info', '请选择单品')
+            addproduct(){
+                this.errors.clear('product_info')
+                let last_product_info = this.form_data.product_info[this.form_data.product_info.length -1]
+                if(last_product_info){
+                    if(!last_product_info['product_id']){
+                        this.setInfoMessage('product_info', '请选择单品')
                         return false;
                     }
 
-                    if(last_project_info['quantity'] <=0){
-                        this.setInfoMessage('project_info', '数量必须大于0')
+                    if(last_product_info['quantity'] <=0){
+                        this.setInfoMessage('product_info', '数量必须大于0')
                         return false;
                     }
                 }
 
-                this.form_data.project_info.push({
+                this.form_data.product_info.push({
                     id:'l-' + (++this.info_length),
-                    project_id:'',
+                    product_id:'',
                     quantity:1,
                     deleted:false
                 });
 
-                this.project_info_count = this.form_data.project_info.length
+                this.product_info_count = this.form_data.product_info.length
             },
 
             setInfoMessage(id,text){
@@ -284,11 +298,11 @@
                         for (let j in this.form_data.images) {
                             form_data.append('images[]', this.form_data.images[j]);
                         }
-                    }else if(i == 'project_info'){
-                        for(let i=0,len=this.form_data.project_info.length;i<len;i++){
-                            form_data.append('project_info['+i+'][project_id]',this.form_data.project_info[i].project_id)
-                            form_data.append('project_info['+i+'][quantity]',this.form_data.project_info[i].quantity)
-                            form_data.append('project_info['+i+'][deleted]',this.form_data.project_info[i].deleted)
+                    }else if(i == 'product_info'){
+                        for(let i=0,len=this.form_data.product_info.length;i<len;i++){
+                            form_data.append('product_info['+i+'][product_id]',this.form_data.product_info[i].product_id)
+                            form_data.append('product_info['+i+'][quantity]',this.form_data.product_info[i].quantity)
+                            form_data.append('product_info['+i+'][deleted]',this.form_data.product_info[i].deleted)
                         }
                     }else{
                         form_data.append(i, this.form_data[i]);

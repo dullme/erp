@@ -23,7 +23,7 @@
                 <p>组合名称：{{ $compose->name }}</p>
                 <p>ASIN：{{ $compose->asin }}</p>
                 <p>箱数：{{ $compose->composeProducts->sum('quantity') }}</p>
-                <p>40HQ：{{ 65/$compose->composeProducts->sum('volume') }}</p>
+                <p>{{$session_hq}} HQ：{!! $compose->hq ? $compose->hq . " <i class='fa fa-check text-success'></i>"  : round($session_hq/$compose->composeProducts->sum('volume'), 0) !!}</p>
                 <p>DDP：{{ $compose->composeProducts->sum('ddp') }}</p>
             </div>
         </div>
@@ -37,7 +37,7 @@
                         <th>描述</th>
                         <th>SKU</th>
                         <th>数量</th>
-                        <th>体积</th>
+                        <th>体积（{{ Session::get('unit', 'cm') == 'in' ? '立方英尺' : '立方米' }}）</th>
                         <th>DDP</th>
                     </tr>
                 </thead>
@@ -55,13 +55,21 @@
                                 </span>
                             </td>
                             <td>{{ $item->product->sku }}</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td>{{ $item->volume }}</td>
+                            <td>{{ $item->quantity }} {{ $item->product->unit }}</td>
+                            <td>{{ Session::get('unit', 'cm') == 'in' ? round($item->volume * config('cuft'), 2) .' cu ft' : round($item->volume, 2) .' m³'}}</td>
                             <td>{{ $item->product->ddp }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+
+        @if($compose->content)
+            <div class="panel panel-default">
+                <div class="panel-heading">详情</div>
+                <div style="padding: 20px">{!! $compose->content !!}</div>
+            </div>
+        @endif
+
     </div>
 </div>

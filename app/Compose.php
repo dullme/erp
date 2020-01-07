@@ -10,6 +10,8 @@ class Compose extends Model
         'name',
         'asin',
         'image',
+        'hq',
+        'content'
     ];
 
     public function composeProducts(){

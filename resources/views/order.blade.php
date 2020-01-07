@@ -22,8 +22,8 @@
         <div class="row" style="margin-bottom: 20px">
             <div class="col-lg-9">
                 <p>订单编号：{{ $order->no }}</p>
-                <p>供应商：{{ $order->supplier->name }}</p>
-                <p>供应商电话：{{ $order->supplier->mobile }}</p>
+                <p>供应商：{{ optional($order->supplier)->name }}</p>
+                <p>供应商电话：{{ optional($order->supplier)->mobile }}</p>
                 <p>签订日：{{ $order->signing_at }}</p>
             </div>
         </div>

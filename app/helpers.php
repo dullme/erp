@@ -40,3 +40,15 @@ function getStatusText($status){
 
     return $text[$status];
 }
+
+
+function getUnit(){
+    return [
+        '箱' => '箱',
+        '套' => '套',
+        '把' => '把',
+        '个' => '个',
+        '只' => '只',
+        '枚' => '枚',
+    ];
+}

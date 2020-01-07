@@ -28,6 +28,11 @@ class WarehouseCompanyController extends AdminController
         $grid->model()->orderByDesc('id');
         $grid->disableExport();
         $grid->disableRowSelector();
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $filter->like('name', '名称');
+            $filter->like('mobile', '电话');
+        });
 
         $grid->column('name', __('名称'));
         $grid->column('mobile', __('电话'));

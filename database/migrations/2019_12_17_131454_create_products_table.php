@@ -21,9 +21,11 @@ class CreateProductsTable extends Migration
             $table->integer('height')->comment('高');
             $table->decimal('weight', 10, 2)->comment('重量');
             $table->integer('ddp')->comment('价格');
-            $table->integer('hq')->comment('hq');
+            $table->string('hq')->nullable()->comment('hq');
+            $table->string('unit')->nullable()->comment('单位');
             $table->string('image')->nullable()->comment('图片');
             $table->string('description')->nullable()->comment('描述');
+            $table->longText('content')->nullable()->comment('详情');
             $table->timestamps();
         });
     }
