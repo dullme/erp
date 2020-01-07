@@ -2,20 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9dd538f9-68bf-44f8-9acc-19f55716d661" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/js/components/Package.vue" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/add_contact.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/package.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/OrderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/OrderController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/SupplierController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/SupplierController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/PackageController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/PackageController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseCompanyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseCompanyController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Admin/routes.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/routes.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Warehouse.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Warehouse.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/migrations/2019_12_21_162910_create_warehouses_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_12_21_162910_create_warehouses_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/Warehouse.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Warehouse.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/order.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/order.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/Order.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Order.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/add_contact.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/add_contact.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/package.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/package.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,7 +156,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/js/components" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -176,8 +174,8 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/resources/views" />
       <recent name="$PROJECT_DIR$/resources/js/components" />
+      <recent name="$PROJECT_DIR$/resources/views" />
       <recent name="$PROJECT_DIR$/public/vendor" />
       <recent name="$PROJECT_DIR$/app/Admin/Controllers" />
       <recent name="$PROJECT_DIR$/app/Admin" />
@@ -225,7 +223,7 @@
       <workItem from="1578123139649" duration="420000" />
       <workItem from="1578125503870" duration="46000" />
       <workItem from="1578125929572" duration="134000" />
-      <workItem from="1578141896179" duration="39991000" />
+      <workItem from="1578141896179" duration="48538000" />
     </task>
     <servers />
   </component>
@@ -241,10 +239,10 @@
       <screen x="0" y="0" width="1280" height="800" />
     </state>
     <state x="328" y="116" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1280.800@0.0.1280.800" timestamp="1576171561230" />
-    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1578230543340">
+    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog" timestamp="1578375575573">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1578230543340" />
+    <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1578375575573" />
     <state x="356" y="198" key="NewPhpClassDialog" timestamp="1576812946698">
       <screen x="0" y="0" width="1280" height="800" />
     </state>
@@ -258,11 +256,11 @@
     </state>
     <state x="0" y="0" key="SettingsEditor/0.0.1280.800@0.0.1280.800" timestamp="1576171557486" />
     <state x="0" y="0" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1576676721602" />
-    <state width="801" height="600" key="SwitcherDM" timestamp="1578231729943">
+    <state width="801" height="600" key="SwitcherDM" timestamp="1578382286187">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state width="750" height="600" key="SwitcherDM/0.0.1280.800@0.0.1280.800" timestamp="1577280216539" />
-    <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1578231729943" />
+    <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1578382286187" />
     <state x="364" y="130" width="1192" height="820" key="find.popup" timestamp="1578153633262">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

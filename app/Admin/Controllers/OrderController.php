@@ -50,9 +50,26 @@ class OrderController extends ResponseController
         });
         $grid->supplier()->name('供应商');
         $grid->column('signing_at', __('签订日'));
+        $grid->column('product', __('SKU:数量'))->display(function ($product) {
+            $products = Product::find(collect($product)->pluck('product_id'));
+            $product = collect($product)->map(function ($item) use ($products) {
+                $res = $products->where('id', $item['product_id'])->first();
+
+                return "{$res->sku}:{$item['quantity']}";
+            })->toArray();
+
+            return implode("|", $product);
+        });
 //        $grid->column('remark', __('备注'));
 //        $grid->column('created_at', __('添加时间'));
 //        $grid->column('updated_at', __('Updated at'));
+
+        $grid->actions(function ($actions) {
+            $actions->disableEdit();
+            $actions->disableDelete();
+        });
+
+        $grid->disableActions();
 
         $grid->disableRowSelector();
         $grid->disableExport();

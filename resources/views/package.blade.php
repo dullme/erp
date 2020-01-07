@@ -29,8 +29,11 @@
                     <thead>
                     <tr>
                         <th>图片</th>
+                        <th>编号 <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="订单编号-SKU-入库批次-入库周期"></i></th>
                         <th>SKU</th>
                         <th>数量</th>
+                        <th>状态</th>
+                        <th>仓储</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -41,8 +44,15 @@
                                     <img width="100" src="{{ asset('uploads/'.$item['image']) }}">
                                 @endif
                             </td>
+                            <td>
+                                @foreach($item['batch_number'] as $key=>$bn)
+                                    <p><a href="{{ url('/admin/orders/'.$bn->order_id) }}">{{ $bn->batch_number }}:{{ $bn->quantity }}</a></p>
+                                @endforeach
+                            </td>
                             <td>{{ $item['sku'] }}</td>
                             <td>{{ $item['quantity'] }}</td>
+                            <td>{{ getStatusText($item['status']) }}</td>
+                            <td>{{ $item['warehouse_company'] ?? '等待入仓' }}</td>
                         </tr>
                     @endforeach
                     </tbody>

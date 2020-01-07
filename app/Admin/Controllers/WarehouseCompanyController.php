@@ -70,4 +70,11 @@ class WarehouseCompanyController extends AdminController
 
         return $form;
     }
+
+    public function warehouseCompany()
+    {
+        $warehouseCompany = WarehouseCompany::select('id','name as text')->get();
+
+        return response()->json($warehouseCompany);
+    }
 }

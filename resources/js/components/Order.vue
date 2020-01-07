@@ -373,7 +373,7 @@
                             response.data.message,
                             'success'
                         ).then(function () {
-                            location.reload()
+                            location.href="/admin/orders";
                         });
                     }else{
                         toastr.error(response.data.data.message);

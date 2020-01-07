@@ -17,6 +17,7 @@ class CreateWarehousesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('order_id')->unsigned()->comment('订单ID');
             $table->integer('package_id')->unsigned()->nullable()->comment('集装箱ID');
+            $table->integer('warehouse_company_id')->unsigned()->nullable()->comment('仓储公司ID');
             $table->integer('order_batch')->default(1)->comment('入库批次');
             $table->integer('batch_number')->comment('批次号');
             $table->integer('product_id')->unsigned()->comment('所属产品');

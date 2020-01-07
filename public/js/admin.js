@@ -2554,7 +2554,7 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
 
         if (response.data.status) {
           swal("SUCCESS", response.data.message, 'success').then(function () {
-            location.reload();
+            location.href = "/admin/orders";
           });
         } else {
           toastr.error(response.data.data.message);

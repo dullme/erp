@@ -11,6 +11,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 
 class PackageController extends ResponseController
 {
@@ -43,12 +44,18 @@ class PackageController extends ResponseController
         $grid = new Grid(new Package);
         $grid->model()->orderByDesc('id');
 
-        $grid->column('lading_number', __('提单号'));
+        $grid->column('lading_number', __('提单号'))->display(function (){
+            $url = url('/admin/packages/'.$this->id);
+            return "<a href='{$url}'>{$this->lading_number}</a>";
+        });
         $grid->column('container_number', __('集装箱号'))->display(function (){
             $url = url('/admin/packages/'.$this->id);
             return "<a href='{$url}'>{$this->container_number}</a>";
         });
-        $grid->column('seal_number', __('铅封号'));
+        $grid->column('seal_number', __('铅封号'))->display(function (){
+            $url = url('/admin/packages/'.$this->id);
+            return "<a href='{$url}'>{$this->seal_number}</a>";
+        });
         $grid->column('packaged_at', __('装箱时间'));
         $grid->forwardingCompany()->name('货代公司');
         $grid->column('product', __('SKU:数量'))->display(function ($product) {
@@ -62,7 +69,11 @@ class PackageController extends ResponseController
             return implode("|", $product);
         });
         $grid->column('in', '入库')->display(function (){
-            return "<a data-toggle='modal' data-target='#add_contact' title='添加联系人' onclick=\"addContact({$this->id})\"><i class='fa fa-balance-scale'></i></a>";
+            if($this->warehouse->where('status', 2)->count()){
+                return "<a style='cursor: pointer' data-toggle='modal' data-target='#add_contact' title='添加联系人' onclick=\"addContact({$this->id})\"><i class='fa fa-balance-scale'></i></a>";
+            }else{
+                return "<i class='fa fa-check text-success'></i>";
+            }
         });
 //        $grid->column('remark', __('Remark'));
 //        $grid->column('created_at', __('Created at'));
@@ -72,8 +83,11 @@ class PackageController extends ResponseController
         $grid->disableExport();
 
         $grid->actions(function ($actions) {
+            $actions->disableEdit();
             $actions->disableDelete();
         });
+
+        $grid->disableActions();
 
         return $grid;
     }
@@ -88,14 +102,17 @@ class PackageController extends ResponseController
     {
         $package = Package::with([
             'warehouse' => function ($query) {
-                $query->where('status', 2)->with('product');
+                $query->whereIn('status', [2,3,4])->with('product', 'warehouseCompany');
             }
         ])->find($id);
 
         $res = $package->warehouse->groupBy('product_id')->map(function ($item) {
-
-            return array_merge($item->first()->product->toArray(), [
+            $first = $item->first();
+            return array_merge($first->product->toArray(), [
                 'quantity' => $item->sum('quantity'),
+                'status' => $first->status,
+                'warehouse_company' => optional($first->warehouseCompany)->name,
+                'batch_number' => $item,
             ]);
         })->values();
 
@@ -249,5 +266,45 @@ class PackageController extends ResponseController
 
             return $this->setStatusCode(422)->responseError($exception->getMessage());
         }
+    }
+
+    public function getPackageInfo($id)
+    {
+        $package = Package::with([
+            'warehouse' => function ($query) {
+                $query->where('status', 2)->with('product');
+            },
+            'forwardingCompany:id,name'
+        ])->find($id);
+
+        $res = $package->warehouse->groupBy('product_id')->map(function ($item) {
+
+            return array_merge($item->first()->product->toArray(), [
+                'quantity' => $item->sum('quantity'),
+            ]);
+        })->values();
+
+        $package->offsetUnset('warehouse');
+        $package->setAttribute('warehouse', $res);
+
+        return response()->json($package);
+    }
+
+    public function packageIn(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required',
+            'company' => 'required',
+        ]);
+
+        $warehouse = Warehouse::where([
+            'status'=> 2,
+            'package_id' => $data['id']
+        ])->update([
+            'status' => 3,
+            'warehouse_company_id' => $data['company']
+        ]);
+
+        return response()->json($warehouse);
     }
 }

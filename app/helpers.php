@@ -29,3 +29,14 @@ function bigNumber($number, $scale = 2)
 {
     return new \Moontoast\Math\BigNumber($number, $scale);
 }
+
+function getStatusText($status){
+    $text = [
+        '1' => '中国仓',
+        '2' => '海上',
+        '3' => '美国仓',
+        '4' => '电商',
+    ];
+
+    return $text[$status];
+}

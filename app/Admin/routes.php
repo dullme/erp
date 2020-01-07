@@ -29,6 +29,8 @@ Route::group([
 
     //装箱
     $router->resource('packages', PackageController::class);
+    $router->get('api/getPackage-info/{id}', 'PackageController@getPackageInfo');
+    $router->post('api/package-in', 'PackageController@packageIn');
 
     //供货商
     $router->resource('suppliers', SupplierController::class);
@@ -40,4 +42,5 @@ Route::group([
 
     //仓储公司
     $router->resource('warehouse-companies', WarehouseCompanyController::class);
+    $router->get('api/warehouse-company', 'WarehouseCompanyController@warehouseCompany');
 });
