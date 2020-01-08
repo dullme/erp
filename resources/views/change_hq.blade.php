@@ -13,10 +13,9 @@
                 <div class="modal-body">
                     <div class="box-body" style="margin-top: 10px">
                         <p><select id="hq_value" class="form-control" >
-                                <option value="40" {{ session('hq', config('hq')) == 40 ?'selected="selected"' :'' }}>40</option>
-                                <option value="50" {{ session('hq', config('hq')) == 50 ?'selected="selected"' :'' }}>50</option>
-                                <option value="60" {{ session('hq', config('hq')) == 60 ?'selected="selected"' :'' }}>60</option>
-                                <option value="70" {{ session('hq', config('hq')) == 70 ?'selected="selected"' :'' }}>70</option>
+                                <option value="28" {{ session('hq', config('hq')) == 28 ?'selected="selected"' :'' }}>20</option>
+                                <option value="60" {{ session('hq', config('hq')) == 60 ?'selected="selected"' :'' }}>40</option>
+                                <option value="65" {{ session('hq', config('hq')) == 65 ?'selected="selected"' :'' }}>40HQ</option>
                             </select></p>
                     </div>
                 </div>
