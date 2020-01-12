@@ -113,4 +113,20 @@ class BuyerController extends AdminController
 
         return $form;
     }
+
+    public function getBuyer()
+    {
+        $q = request()->input('q');
+        $products = Buyer::where('name', 'like', '%'.$q.'%')->get();
+
+        return response()->json($products);
+    }
+
+    public function getBuyerSelect()
+    {
+        $q = request()->input('q');
+        $products = Buyer::where('name', 'like', '%'.$q.'%')->select('id', 'name as text')->get();
+
+        return response()->json($products);
+    }
 }

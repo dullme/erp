@@ -80,7 +80,7 @@
                     }
                 }).then(response => {
 
-                    if(response.data){
+                    if(response.data.status){
                         swal(
                             "SUCCESS",
                             '入库成功！',
@@ -98,7 +98,7 @@
                 }).catch(error => {
                     swal(
                         "INFO",
-                        '出错啦！',
+                        error.response.data.message,
                         'info'
                     )
                 });

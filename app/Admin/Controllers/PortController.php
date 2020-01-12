@@ -8,7 +8,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class PortController extends AdminController
+class PortController extends ResponseController
 {
     /**
      * Title for current resource.
@@ -67,5 +67,44 @@ class PortController extends AdminController
         ]);
 
         return $form;
+    }
+
+    public function getPort()
+    {
+        $port = Port::select('id', 'name')->get();
+        $port2 = Port::select('id', 'name')->orderBy('type', 'DESC')->get();
+
+        $ship_port = $port->toArray();
+        $arrival_port = $port2->toArray();
+
+        return $this->responseSuccess([
+            'ship_port' => $ship_port,
+            'arrival_port' => $arrival_port,
+        ]);
+
+    }
+
+    public function getPortSelect1()
+    {
+        $port = Port::select('id', 'name as text')->get();
+
+        return $port->map(function ($item){
+            return [
+                'id' => $item['text'],
+                'text' => $item['text'],
+            ];
+        });
+    }
+
+    public function getPortSelect2()
+    {
+        $port = Port::select('id', 'name as text')->orderBy('type', 'DESC')->get();
+
+        return $port->map(function ($item){
+            return [
+                'id' => $item['text'],
+                'text' => $item['text'],
+            ];
+        });
     }
 }

@@ -19,7 +19,7 @@ class CreateWarehousesTable extends Migration
             $table->integer('package_id')->unsigned()->nullable()->comment('集装箱ID');
             $table->integer('warehouse_company_id')->unsigned()->nullable()->comment('仓储公司ID');
             $table->integer('order_batch')->default(1)->comment('入库批次');
-            $table->integer('batch_number')->comment('批次号');
+            $table->string('batch_number')->comment('批次号');
             $table->integer('product_id')->unsigned()->comment('所属产品');
             $table->integer('status')->default(1)->comment('所属仓库:1中国仓库；2海运中；3美国备用仓库；4美国线上');
             $table->integer('quantity')->comment('数量');

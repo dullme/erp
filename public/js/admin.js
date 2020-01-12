@@ -2884,15 +2884,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -2902,12 +2893,23 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
   data: function data() {
     return {
       errors: new _core_Errors__WEBPACK_IMPORTED_MODULE_1__["default"](),
+      ship_ports: [],
+      arrival_ports: [],
       form_data: {
+        agreement_no: '',
+        ship_port: '',
+        arrival_port: '',
         lading_number: '',
         container_number: '',
         seal_number: '',
         forwarding_company_id: '',
+        buyer_id: '',
+        customer_id: '',
         packaged_at: Date.today().toString('yyyy-MM-dd'),
+        departure_at: Date.today().toString('yyyy-MM-dd'),
+        arrival_at: Date.today().toString('yyyy-MM-dd'),
+        entry_at: Date.today().toString('yyyy-MM-dd'),
+        remark: '',
         images: [],
         //图片
         product_info: [] //单品
@@ -2931,10 +2933,16 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
     }
   },
   created: function created() {
+    var _this = this;
+
+    axios.get('/admin/api/port').then(function (response) {
+      _this.ship_ports = response.data.data.ship_port;
+      _this.arrival_ports = response.data.data.arrival_port;
+    });
     console.log('created');
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     console.log('mounted');
     $('.datetime-picker').datetimepicker({
@@ -2943,21 +2951,42 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
       'allowInputToggle': true
     });
     $('#packaged_at').on('dp.change', function (e) {
-      _this.form_data.packaged_at = e.currentTarget.value;
+      _this2.form_data.packaged_at = e.currentTarget.value;
+    });
+    $('#departure_at').on('dp.change', function (e) {
+      _this2.form_data.departure_at = e.currentTarget.value;
+    });
+    $('#arrival_at').on('dp.change', function (e) {
+      _this2.form_data.arrival_at = e.currentTarget.value;
+    });
+    $('#entry_at').on('dp.change', function (e) {
+      _this2.form_data.entry_at = e.currentTarget.value;
+    });
+    $('#ship_port').select2().on("change", function () {
+      _this2.form_data.ship_port = $("#ship_port").val();
+
+      _this2.errors.clear('ship_port');
+    });
+    $('#arrival_port').select2().on("change", function () {
+      _this2.form_data.arrival_port = $("#arrival_port").val();
+
+      _this2.errors.clear('arrival_port');
     });
     this.supplierSelect2();
+    this.buyerSelect2();
+    this.customerSelect2();
     this.pictures(); //上传图片
   },
   methods: {
     deleteproduct: function deleteproduct(length) {
-      var _this2 = this;
+      var _this3 = this;
 
       console.log(length);
       this.errors.clear('product_info');
       this.form_data.product_info.forEach(function (value, index) {
         if (value.id == length) {
           $('#product_info' + value.id).remove();
-          _this2.form_data.product_info[index].deleted = true; // this.$delete(this.form_data.product_info, index)
+          _this3.form_data.product_info[index].deleted = true; // this.$delete(this.form_data.product_info, index)
         }
       }); // this.form_data.product_info.forEach((value)=>{
       //     this.productInfoSelect2(value.id)
@@ -2966,18 +2995,40 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
       this.product_info_count = this.form_data.product_info.length;
     },
     supplierSelect2: function supplierSelect2() {
-      var _this3 = this;
+      var _this4 = this;
 
       _util__WEBPACK_IMPORTED_MODULE_0__["default"].select(this.edit_data.supplier_id, "#forwarding_company", "/admin/api/forwarding-company", "name", "mobile", true, '请选择货代公司');
       $("#forwarding_company").on("change", function () {
-        _this3.form_data.forwarding_company_id = parseInt($("#forwarding_company").val());
+        _this4.form_data.forwarding_company_id = parseInt($("#forwarding_company").val());
+
+        _this4.errors.clear('forwarding_company_id');
+      });
+    },
+    buyerSelect2: function buyerSelect2() {
+      var _this5 = this;
+
+      _util__WEBPACK_IMPORTED_MODULE_0__["default"].select([], "#buyer-select2", "/admin/api/buyer", "name", "mobile", true, '请选择采购商');
+      $("#buyer-select2").on("change", function () {
+        _this5.form_data.buyer_id = parseInt($("#buyer-select2").val());
+
+        _this5.errors.clear('buyer_id');
+      });
+    },
+    customerSelect2: function customerSelect2() {
+      var _this6 = this;
+
+      _util__WEBPACK_IMPORTED_MODULE_0__["default"].select([], "#customer-select2", "/admin/api/customer", "name", "mobile", true, '请选择客户');
+      $("#customer-select2").on("change", function () {
+        _this6.form_data.customer_id = parseInt($("#customer-select2").val());
+
+        _this6.errors.clear('customer_id');
       });
     },
     productInfoSelect2: function productInfoSelect2(index) {
-      var _this4 = this;
+      var _this7 = this;
 
       this.$nextTick(function () {
-        _util__WEBPACK_IMPORTED_MODULE_0__["default"].select(_this4.edit_data.product, '#product_id' + index, "/admin/api/can-box", "name", "text", true, '请选输入关键字', 1, 'zh-CN', function (repo) {
+        _util__WEBPACK_IMPORTED_MODULE_0__["default"].select(_this7.edit_data.product, '#product_id' + index, "/admin/api/can-box", "name", "text", true, '请选输入关键字', 1, 'zh-CN', function (repo) {
           if (repo.loading) return '搜索中...';
           var image = repo['image'] ? "/uploads/" + repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg';
           var html = "<div style='display: flex'>" + "<div><img width='80px' height='80px' src='" + image + "'></div>" + "<div style='margin-left: 20px'>" + "<div>库存：" + repo['warehouses_count'] + "</div>" + "<div>SKU：" + repo['sku'] + "</div>" + "<div>DDP：" + repo['ddp'] + "</div>" + "<div>描述：" + repo['description'] + "</div>" + "</div>" + "</div>";
@@ -2997,11 +3048,11 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
           return text;
         }, false);
         $('#product_id' + index).on('change', function (e) {
-          _this4.errors.clear('product_info');
+          _this7.errors.clear('product_info');
 
-          _this4.form_data.product_info.forEach(function (value, key) {
+          _this7.form_data.product_info.forEach(function (value, key) {
             if (value.id == index) {
-              _this4.$set(_this4.form_data.product_info[key], 'product_id', e.target.value);
+              _this7.$set(_this7.form_data.product_info[key], 'product_id', e.target.value);
             }
           });
         });
@@ -3050,7 +3101,7 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
       }, 3000);
     },
     pictures: function pictures() {
-      var _this5 = this;
+      var _this8 = this;
 
       $("input.pictures").fileinput({
         language: 'zh',
@@ -3069,11 +3120,11 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
         previewFileType: "image",
         browseLabel: "请选择..."
       }).on('change', function (event) {
-        _this5.form_data.images = event.target.files;
+        _this8.form_data.images = event.target.files;
 
-        _this5.errors.clear('images');
+        _this8.errors.clear('images');
       }).on('filecleared', function (event) {
-        _this5.form_data.images = [];
+        _this8.form_data.images = [];
       }).on('filedeleted', function (event, key, jqXHR, data) {
         if (jqXHR.responseJSON.data) {
           toastr.success('图片删除成功');
@@ -3083,7 +3134,7 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
       });
     },
     submit: function submit() {
-      var _this6 = this;
+      var _this9 = this;
 
       var form_data = new FormData();
 
@@ -3122,7 +3173,7 @@ __webpack_require__(/*! ../../../public/vendor/datejs/date-zh-CN */ "./public/ve
         if (error.response.data.status == false) {
           toastr.error(error.response.data.message);
         } else {
-          _this6.errors.record(error.response.data.errors);
+          _this9.errors.record(error.response.data.errors);
         }
       });
     }
@@ -23117,7 +23168,11 @@ var render = function() {
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text", placeholder: "输入 提单号" },
+                        attrs: {
+                          type: "text",
+                          name: "lading_number",
+                          placeholder: "输入 提单号"
+                        },
                         domProps: { value: _vm.form_data.lading_number },
                         on: {
                           input: function($event) {
@@ -23141,7 +23196,7 @@ var render = function() {
                 "div",
                 {
                   staticClass: "form-group ",
-                  class: { "has-error": this.errors.has("lading_number") }
+                  class: { "has-error": this.errors.has("agreement_no") }
                 },
                 [
                   _c(
@@ -23151,12 +23206,12 @@ var render = function() {
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-sm-8" }, [
-                    _vm.errors.has("lading_number")
+                    _vm.errors.has("agreement_no")
                       ? _c("label", { staticClass: "control-label" }, [
                           _c("i", { staticClass: "fa fa-times-circle-o" }),
                           _vm._v(
                             " " +
-                              _vm._s(_vm.errors.get("lading_number")) +
+                              _vm._s(_vm.errors.get("agreement_no")) +
                               "\n                                "
                           )
                         ])
@@ -23170,13 +23225,17 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form_data.lading_number,
-                            expression: "form_data.lading_number"
+                            value: _vm.form_data.agreement_no,
+                            expression: "form_data.agreement_no"
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { type: "text", placeholder: "输入 合同号" },
-                        domProps: { value: _vm.form_data.lading_number },
+                        attrs: {
+                          name: "agreement_no",
+                          type: "text",
+                          placeholder: "输入 合同号"
+                        },
+                        domProps: { value: _vm.form_data.agreement_no },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
@@ -23184,7 +23243,7 @@ var render = function() {
                             }
                             _vm.$set(
                               _vm.form_data,
-                              "lading_number",
+                              "agreement_no",
                               $event.target.value
                             )
                           }
@@ -23435,13 +23494,65 @@ var render = function() {
                 ]
               ),
               _vm._v(" "),
-              _vm._m(7),
+              _c(
+                "div",
+                {
+                  staticClass: "form-group ",
+                  class: { "has-error": this.errors.has("ship_port") }
+                },
+                [
+                  _c(
+                    "label",
+                    { staticClass: "col-sm-2 asterisk control-label" },
+                    [_vm._v("发货港")]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-8" }, [
+                    _vm.errors.has("ship_port")
+                      ? _c("label", { staticClass: "control-label" }, [
+                          _c("i", { staticClass: "fa fa-times-circle-o" }),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.errors.get("ship_port")) +
+                              "\n                                "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "input-group" }, [
+                      _vm._m(7),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          staticClass: "form-control select2",
+                          attrs: { id: "ship_port" }
+                        },
+                        [
+                          _c("option", { attrs: { value: "" } }, [
+                            _vm._v("请选择")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.ship_ports, function(port) {
+                            return _c(
+                              "option",
+                              { domProps: { value: port.name } },
+                              [_vm._v(_vm._s(port.name))]
+                            )
+                          })
+                        ],
+                        2
+                      )
+                    ])
+                  ])
+                ]
+              ),
               _vm._v(" "),
               _c(
                 "div",
                 {
                   staticClass: "form-group ",
-                  class: { "has-error": this.errors.has("packaged_at") }
+                  class: { "has-error": this.errors.has("departure_at") }
                 },
                 [
                   _c(
@@ -23451,12 +23562,12 @@ var render = function() {
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-sm-8" }, [
-                    _vm.errors.has("packaged_at")
+                    _vm.errors.has("departure_at")
                       ? _c("label", { staticClass: "control-label" }, [
                           _c("i", { staticClass: "fa fa-times-circle-o" }),
                           _vm._v(
                             " " +
-                              _vm._s(_vm.errors.get("packaged_at")) +
+                              _vm._s(_vm.errors.get("departure_at")) +
                               "\n                                "
                           )
                         ])
@@ -23470,13 +23581,17 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form_data.packaged_at,
-                            expression: "form_data.packaged_at"
+                            value: _vm.form_data.departure_at,
+                            expression: "form_data.departure_at"
                           }
                         ],
                         staticClass: "form-control datetime-picker",
-                        attrs: { type: "text", placeholder: "预计离港时间" },
-                        domProps: { value: _vm.form_data.packaged_at },
+                        attrs: {
+                          id: "departure_at",
+                          type: "text",
+                          placeholder: "预计离港时间"
+                        },
+                        domProps: { value: _vm.form_data.departure_at },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
@@ -23484,7 +23599,7 @@ var render = function() {
                             }
                             _vm.$set(
                               _vm.form_data,
-                              "packaged_at",
+                              "departure_at",
                               $event.target.value
                             )
                           }
@@ -23495,13 +23610,65 @@ var render = function() {
                 ]
               ),
               _vm._v(" "),
-              _vm._m(9),
+              _c(
+                "div",
+                {
+                  staticClass: "form-group ",
+                  class: { "has-error": this.errors.has("arrival_port") }
+                },
+                [
+                  _c(
+                    "label",
+                    { staticClass: "col-sm-2 asterisk control-label" },
+                    [_vm._v("到货港")]
+                  ),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "col-sm-8" }, [
+                    _vm.errors.has("arrival_port")
+                      ? _c("label", { staticClass: "control-label" }, [
+                          _c("i", { staticClass: "fa fa-times-circle-o" }),
+                          _vm._v(
+                            " " +
+                              _vm._s(_vm.errors.get("arrival_port")) +
+                              "\n                                "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "input-group" }, [
+                      _vm._m(9),
+                      _vm._v(" "),
+                      _c(
+                        "select",
+                        {
+                          staticClass: "form-control select2",
+                          attrs: { id: "arrival_port" }
+                        },
+                        [
+                          _c("option", { attrs: { value: "" } }, [
+                            _vm._v("请选择")
+                          ]),
+                          _vm._v(" "),
+                          _vm._l(_vm.arrival_ports, function(port) {
+                            return _c(
+                              "option",
+                              { domProps: { value: port.name } },
+                              [_vm._v(_vm._s(port.name))]
+                            )
+                          })
+                        ],
+                        2
+                      )
+                    ])
+                  ])
+                ]
+              ),
               _vm._v(" "),
               _c(
                 "div",
                 {
                   staticClass: "form-group ",
-                  class: { "has-error": this.errors.has("packaged_at") }
+                  class: { "has-error": this.errors.has("arrival_at") }
                 },
                 [
                   _c(
@@ -23511,12 +23678,12 @@ var render = function() {
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-sm-8" }, [
-                    _vm.errors.has("packaged_at")
+                    _vm.errors.has("arrival_at")
                       ? _c("label", { staticClass: "control-label" }, [
                           _c("i", { staticClass: "fa fa-times-circle-o" }),
                           _vm._v(
                             " " +
-                              _vm._s(_vm.errors.get("packaged_at")) +
+                              _vm._s(_vm.errors.get("arrival_at")) +
                               "\n                                "
                           )
                         ])
@@ -23530,13 +23697,17 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form_data.packaged_at,
-                            expression: "form_data.packaged_at"
+                            value: _vm.form_data.arrival_at,
+                            expression: "form_data.arrival_at"
                           }
                         ],
                         staticClass: "form-control datetime-picker",
-                        attrs: { type: "text", placeholder: "预计到港时间" },
-                        domProps: { value: _vm.form_data.packaged_at },
+                        attrs: {
+                          id: "arrival_at",
+                          type: "text",
+                          placeholder: "预计到港时间"
+                        },
+                        domProps: { value: _vm.form_data.arrival_at },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
@@ -23544,7 +23715,7 @@ var render = function() {
                             }
                             _vm.$set(
                               _vm.form_data,
-                              "packaged_at",
+                              "arrival_at",
                               $event.target.value
                             )
                           }
@@ -23559,7 +23730,7 @@ var render = function() {
                 "div",
                 {
                   staticClass: "form-group ",
-                  class: { "has-error": this.errors.has("packaged_at") }
+                  class: { "has-error": this.errors.has("entry_at") }
                 },
                 [
                   _c(
@@ -23569,12 +23740,12 @@ var render = function() {
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-sm-8" }, [
-                    _vm.errors.has("packaged_at")
+                    _vm.errors.has("entry_at")
                       ? _c("label", { staticClass: "control-label" }, [
                           _c("i", { staticClass: "fa fa-times-circle-o" }),
                           _vm._v(
                             " " +
-                              _vm._s(_vm.errors.get("packaged_at")) +
+                              _vm._s(_vm.errors.get("entry_at")) +
                               "\n                                "
                           )
                         ])
@@ -23588,13 +23759,17 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form_data.packaged_at,
-                            expression: "form_data.packaged_at"
+                            value: _vm.form_data.entry_at,
+                            expression: "form_data.entry_at"
                           }
                         ],
                         staticClass: "form-control datetime-picker",
-                        attrs: { type: "text", placeholder: "预计入仓时间" },
-                        domProps: { value: _vm.form_data.packaged_at },
+                        attrs: {
+                          id: "entry_at",
+                          type: "text",
+                          placeholder: "预计入仓时间"
+                        },
+                        domProps: { value: _vm.form_data.entry_at },
                         on: {
                           input: function($event) {
                             if ($event.target.composing) {
@@ -23602,7 +23777,7 @@ var render = function() {
                             }
                             _vm.$set(
                               _vm.form_data,
-                              "packaged_at",
+                              "entry_at",
                               $event.target.value
                             )
                           }
@@ -23617,9 +23792,7 @@ var render = function() {
                 "div",
                 {
                   staticClass: "form-group ",
-                  class: {
-                    "has-error": this.errors.has("forwarding_company_id")
-                  }
+                  class: { "has-error": this.errors.has("buyer_id") }
                 },
                 [
                   _c(
@@ -23629,12 +23802,12 @@ var render = function() {
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-sm-8" }, [
-                    _vm.errors.has("forwarding_company_id")
+                    _vm.errors.has("buyer_id")
                       ? _c("label", { staticClass: "control-label" }, [
                           _c("i", { staticClass: "fa fa-times-circle-o" }),
                           _vm._v(
                             " " +
-                              _vm._s(_vm.errors.get("forwarding_company_id")) +
+                              _vm._s(_vm.errors.get("buyer_id")) +
                               "\n                                "
                           )
                         ])
@@ -23648,12 +23821,12 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form_data.forwarding_company_id,
-                            expression: "form_data.forwarding_company_id"
+                            value: _vm.form_data.buyer_id,
+                            expression: "form_data.buyer_id"
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { id: "" },
+                        attrs: { id: "buyer-select2" },
                         on: {
                           change: function($event) {
                             var $$selectedVal = Array.prototype.filter
@@ -23666,7 +23839,7 @@ var render = function() {
                               })
                             _vm.$set(
                               _vm.form_data,
-                              "forwarding_company_id",
+                              "buyer_id",
                               $event.target.multiple
                                 ? $$selectedVal
                                 : $$selectedVal[0]
@@ -23683,9 +23856,7 @@ var render = function() {
                 "div",
                 {
                   staticClass: "form-group ",
-                  class: {
-                    "has-error": this.errors.has("forwarding_company_id")
-                  }
+                  class: { "has-error": this.errors.has("customer_id") }
                 },
                 [
                   _c(
@@ -23695,12 +23866,12 @@ var render = function() {
                   ),
                   _vm._v(" "),
                   _c("div", { staticClass: "col-sm-8" }, [
-                    _vm.errors.has("forwarding_company_id")
+                    _vm.errors.has("customer_id")
                       ? _c("label", { staticClass: "control-label" }, [
                           _c("i", { staticClass: "fa fa-times-circle-o" }),
                           _vm._v(
                             " " +
-                              _vm._s(_vm.errors.get("forwarding_company_id")) +
+                              _vm._s(_vm.errors.get("customer_id")) +
                               "\n                                "
                           )
                         ])
@@ -23714,12 +23885,12 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.form_data.forwarding_company_id,
-                            expression: "form_data.forwarding_company_id"
+                            value: _vm.form_data.customer_id,
+                            expression: "form_data.customer_id"
                           }
                         ],
                         staticClass: "form-control",
-                        attrs: { id: "" },
+                        attrs: { id: "customer-select2" },
                         on: {
                           change: function($event) {
                             var $$selectedVal = Array.prototype.filter
@@ -23732,7 +23903,7 @@ var render = function() {
                               })
                             _vm.$set(
                               _vm.form_data,
-                              "forwarding_company_id",
+                              "customer_id",
                               $event.target.multiple
                                 ? $$selectedVal
                                 : $$selectedVal[0]
@@ -23745,73 +23916,37 @@ var render = function() {
                 ]
               ),
               _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass: "form-group ",
-                  class: {
-                    "has-error": this.errors.has("forwarding_company_id")
-                  }
-                },
-                [
-                  _c(
-                    "label",
-                    { staticClass: "col-sm-2 asterisk control-label" },
-                    [_vm._v("供应商")]
-                  ),
-                  _vm._v(" "),
-                  _c("div", { staticClass: "col-sm-8" }, [
-                    _vm.errors.has("forwarding_company_id")
-                      ? _c("label", { staticClass: "control-label" }, [
-                          _c("i", { staticClass: "fa fa-times-circle-o" }),
-                          _vm._v(
-                            " " +
-                              _vm._s(_vm.errors.get("forwarding_company_id")) +
-                              "\n                                "
-                          )
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "input-group" }, [
-                      _vm._m(14),
-                      _vm._v(" "),
-                      _c("select", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.form_data.forwarding_company_id,
-                            expression: "form_data.forwarding_company_id"
-                          }
-                        ],
-                        staticClass: "form-control",
-                        attrs: { id: "" },
-                        on: {
-                          change: function($event) {
-                            var $$selectedVal = Array.prototype.filter
-                              .call($event.target.options, function(o) {
-                                return o.selected
-                              })
-                              .map(function(o) {
-                                var val = "_value" in o ? o._value : o.value
-                                return val
-                              })
-                            _vm.$set(
-                              _vm.form_data,
-                              "forwarding_company_id",
-                              $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            )
-                          }
+              _c("div", { staticClass: "form-group " }, [
+                _c(
+                  "label",
+                  { staticClass: "col-sm-2 asterisk control-label" },
+                  [_vm._v("备注")]
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-sm-8" }, [
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.form_data.remark,
+                        expression: "form_data.remark"
+                      }
+                    ],
+                    staticClass: "form-control remark",
+                    attrs: { rows: "5", placeholder: "输入 备注" },
+                    domProps: { value: _vm.form_data.remark },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
                         }
-                      })
-                    ])
-                  ])
-                ]
-              ),
-              _vm._v(" "),
-              _vm._m(15),
+                        _vm.$set(_vm.form_data, "remark", $event.target.value)
+                      }
+                    }
+                  })
+                ])
+              ]),
               _vm._v(" "),
               _c("div", { staticClass: "form-group  " }, [
                 _c("label", { staticClass: "col-sm-2  control-label" }, [
@@ -23829,7 +23964,7 @@ var render = function() {
                       _c(
                         "tbody",
                         [
-                          _vm._m(16),
+                          _vm._m(14),
                           _vm._v(" "),
                           _vm._l(_vm.form_data.product_info, function(
                             product_info
@@ -23971,7 +24106,7 @@ var render = function() {
           ])
         ]),
         _vm._v(" "),
-        _vm._m(17)
+        _vm._m(15)
       ]
     )
   ])
@@ -24060,60 +24195,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group " }, [
-      _c("label", { staticClass: "col-sm-2 asterisk control-label" }, [
-        _vm._v("发货港")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-8" }, [
-        _c("div", { staticClass: "input-group" }, [
-          _c("span", { staticClass: "input-group-addon" }, [
-            _c("i", { staticClass: "fa fa-pencil fa-fw" })
-          ]),
-          _vm._v(" "),
-          _c("select", { staticClass: "form-control" }, [
-            _c("option", { attrs: { value: "天津港" } }, [_vm._v("天津港")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "宁波港" } }, [_vm._v("宁波港")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "上海港" } }, [_vm._v("上海港")])
-          ])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c("span", { staticClass: "input-group-addon" }, [
       _c("i", { staticClass: "fa fa-pencil fa-fw" })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group " }, [
-      _c("label", { staticClass: "col-sm-2 asterisk control-label" }, [
-        _vm._v("到货港")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-8" }, [
-        _c("div", { staticClass: "input-group" }, [
-          _c("span", { staticClass: "input-group-addon" }, [
-            _c("i", { staticClass: "fa fa-pencil fa-fw" })
-          ]),
-          _vm._v(" "),
-          _c("select", { staticClass: "form-control" }, [
-            _c("option", { attrs: { value: "天津港" } }, [_vm._v("天津港")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "宁波港" } }, [_vm._v("宁波港")]),
-            _vm._v(" "),
-            _c("option", { attrs: { value: "上海港" } }, [_vm._v("上海港")])
-          ])
-        ])
-      ])
     ])
   },
   function() {
@@ -24160,17 +24243,8 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group " }, [
-      _c("label", { staticClass: "col-sm-2 asterisk control-label" }, [
-        _vm._v("备注")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-8" }, [
-        _c("textarea", {
-          staticClass: "form-control remark",
-          attrs: { name: "remark", rows: "5", placeholder: "输入 备注" }
-        })
-      ])
+    return _c("span", { staticClass: "input-group-addon" }, [
+      _c("i", { staticClass: "fa fa-pencil fa-fw" })
     ])
   },
   function() {

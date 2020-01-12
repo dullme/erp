@@ -113,4 +113,20 @@ class CustomerController extends AdminController
 
         return $form;
     }
+
+    public function getCustomer()
+    {
+        $q = request()->input('q');
+        $products = Customer::where('name', 'like', '%'.$q.'%')->get();
+
+        return response()->json($products);
+    }
+
+    public function getCustomerSelect()
+    {
+        $q = request()->input('q');
+        $products = Customer::where('name', 'like', '%'.$q.'%')->select('id', 'name as text')->get();
+
+        return response()->json($products);
+    }
 }

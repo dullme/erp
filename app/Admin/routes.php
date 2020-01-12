@@ -39,6 +39,7 @@ Route::group([
     $router->resource('packages', PackageController::class);
     $router->get('api/getPackage-info/{id}', 'PackageController@getPackageInfo');
     $router->post('api/package-in', 'PackageController@packageIn');
+    $router->post('/api/package/review/{id}', 'PackageController@packageReview');
 
     //供货商
     $router->resource('suppliers', SupplierController::class);
@@ -47,13 +48,23 @@ Route::group([
     //货代
     $router->resource('forwarding-companies', ForwardingCompanyController::class);
     $router->get('api/forwarding-company', 'ForwardingCompanyController@forwardingCompany');
+    $router->get('api/forwarding-company-select', 'ForwardingCompanyController@forwardingCompanySelect');
 
     //客户
     $router->resource('customers', CustomerController::class);
+    $router->get('/api/customer', 'CustomerController@getCustomer');
+    $router->get('/api/customer-select', 'CustomerController@getCustomerSelect');
+
     //采购商
     $router->resource('buyers', BuyerController::class);
+    $router->get('/api/buyer', 'BuyerController@getBuyer');
+    $router->get('/api/buyer-select', 'BuyerController@getBuyerSelect');
+
     //港口
     $router->resource('ports', PortController::class);
+    $router->get('/api/port', 'PortController@getPort');
+    $router->get('/api/port-select1', 'PortController@getPortSelect1');
+    $router->get('/api/port-select2', 'PortController@getPortSelect2');
 
     //仓储公司
     $router->resource('warehouse-companies', WarehouseCompanyController::class);

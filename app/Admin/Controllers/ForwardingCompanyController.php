@@ -121,4 +121,12 @@ class ForwardingCompanyController extends AdminController
 
         return response()->json($forwardingCompany);
     }
+
+    public function forwardingCompanySelect()
+    {
+        $q = request()->input('q');
+        $forwardingCompany = ForwardingCompany::where('name', 'like', '%'.$q.'%')->select('id', 'name as text')->get();
+
+        return response()->json($forwardingCompany);
+    }
 }

@@ -25,20 +25,20 @@
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <input v-model="form_data.lading_number" type="text" class="form-control" placeholder="输入 提单号">
+                                    <input v-model="form_data.lading_number" type="text" name="lading_number" class="form-control" placeholder="输入 提单号">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group " :class="{'has-error': this.errors.has('lading_number')}">
+                        <div class="form-group " :class="{'has-error': this.errors.has('agreement_no')}">
                             <label class="col-sm-2 asterisk control-label">合同号</label>
                             <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('lading_number')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('lading_number') }}
+                                <label class="control-label" v-if="errors.has('agreement_no')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('agreement_no') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <input v-model="form_data.lading_number" type="text" class="form-control" placeholder="输入 合同号">
+                                    <input v-model="form_data.agreement_no" name="agreement_no" type="text" class="form-control" placeholder="输入 合同号">
                                 </div>
                             </div>
                         </div>
@@ -95,108 +95,99 @@
                             </div>
                         </div>
 
-                        <div class="form-group ">
+                        <div class="form-group "  :class="{'has-error': this.errors.has('ship_port')}">
                             <label class="col-sm-2 asterisk control-label">发货港</label>
                             <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('ship_port')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('ship_port') }}
+                                </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <select class="form-control">
-                                        <option value="天津港">天津港</option>
-                                        <option value="宁波港">宁波港</option>
-                                        <option value="上海港">上海港</option>
+                                    <select class="form-control select2" id="ship_port">
+                                        <option value="">请选择</option>
+                                        <option v-for="port in ship_ports " :value="port.name">{{ port.name }}</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group " :class="{'has-error': this.errors.has('packaged_at')}">
+                        <div class="form-group " :class="{'has-error': this.errors.has('departure_at')}">
                             <label class="col-sm-2 asterisk control-label">预计离港时间</label>
                             <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('packaged_at')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('packaged_at') }}
+                                <label class="control-label" v-if="errors.has('departure_at')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('departure_at') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <input v-model="form_data.packaged_at" type="text" class="form-control datetime-picker" placeholder="预计离港时间">
+                                    <input id="departure_at"  v-model="form_data.departure_at" type="text" class="form-control datetime-picker" placeholder="预计离港时间">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group ">
+                        <div class="form-group " :class="{'has-error': this.errors.has('arrival_port')}">
                             <label class="col-sm-2 asterisk control-label">到货港</label>
                             <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('arrival_port')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('arrival_port') }}
+                                </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <select class="form-control">
-                                        <option value="天津港">天津港</option>
-                                        <option value="宁波港">宁波港</option>
-                                        <option value="上海港">上海港</option>
+                                    <select class="form-control select2" id="arrival_port">
+                                        <option value="">请选择</option>
+                                        <option v-for="port in arrival_ports " :value="port.name">{{ port.name }}</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group " :class="{'has-error': this.errors.has('packaged_at')}">
+                        <div class="form-group " :class="{'has-error': this.errors.has('arrival_at')}">
                             <label class="col-sm-2 asterisk control-label">预计到港时间</label>
                             <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('packaged_at')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('packaged_at') }}
+                                <label class="control-label" v-if="errors.has('arrival_at')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('arrival_at') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <input v-model="form_data.packaged_at" type="text" class="form-control datetime-picker" placeholder="预计到港时间">
+                                    <input id="arrival_at" v-model="form_data.arrival_at" type="text" class="form-control datetime-picker" placeholder="预计到港时间">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group " :class="{'has-error': this.errors.has('packaged_at')}">
+                        <div class="form-group " :class="{'has-error': this.errors.has('entry_at')}">
                             <label class="col-sm-2 asterisk control-label">预计入仓时间</label>
                             <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('packaged_at')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('packaged_at') }}
+                                <label class="control-label" v-if="errors.has('entry_at')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('entry_at') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <input v-model="form_data.packaged_at" type="text" class="form-control datetime-picker" placeholder="预计入仓时间">
+                                    <input id="entry_at" v-model="form_data.entry_at" type="text" class="form-control datetime-picker" placeholder="预计入仓时间">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group " :class="{'has-error': this.errors.has('forwarding_company_id')}">
+                        <div class="form-group " :class="{'has-error': this.errors.has('buyer_id')}">
                             <label class="col-sm-2 asterisk control-label">采购商</label>
                             <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('forwarding_company_id')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('forwarding_company_id') }}
+                                <label class="control-label" v-if="errors.has('buyer_id')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('buyer_id') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <select class="form-control" id="" v-model="form_data.forwarding_company_id"> </select>
+                                    <select class="form-control" id="buyer-select2" v-model="form_data.buyer_id"> </select>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group " :class="{'has-error': this.errors.has('forwarding_company_id')}">
+                        <div class="form-group " :class="{'has-error': this.errors.has('customer_id')}">
                             <label class="col-sm-2 asterisk control-label">客户</label>
                             <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('forwarding_company_id')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('forwarding_company_id') }}
+                                <label class="control-label" v-if="errors.has('customer_id')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('customer_id') }}
                                 </label>
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <select class="form-control" id="" v-model="form_data.forwarding_company_id"> </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group " :class="{'has-error': this.errors.has('forwarding_company_id')}">
-                            <label class="col-sm-2 asterisk control-label">供应商</label>
-                            <div class="col-sm-8">
-                                <label class="control-label" v-if="errors.has('forwarding_company_id')">
-                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('forwarding_company_id') }}
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                                    <select class="form-control" id="" v-model="form_data.forwarding_company_id"> </select>
+                                    <select class="form-control" id="customer-select2" v-model="form_data.customer_id"> </select>
                                 </div>
                             </div>
                         </div>
@@ -204,7 +195,7 @@
                         <div class="form-group ">
                             <label class="col-sm-2 asterisk control-label">备注</label>
                             <div class="col-sm-8">
-                                <textarea name="remark" class="form-control remark" rows="5" placeholder="输入 备注"></textarea>
+                                <textarea class="form-control remark" v-model="form_data.remark" rows="5" placeholder="输入 备注"></textarea>
                             </div>
                         </div>
 
@@ -292,12 +283,23 @@
         data() {
             return {
                 errors: new Errors(),
+                ship_ports:[],
+                arrival_ports:[],
                 form_data: {
+                    agreement_no: '',
+                    ship_port:'',
+                    arrival_port:'',
                     lading_number: '',
                     container_number: '',
                     seal_number: '',
                     forwarding_company_id: '',
+                    buyer_id: '',
+                    customer_id: '',
                     packaged_at:Date.today().toString('yyyy-MM-dd'),
+                    departure_at:Date.today().toString('yyyy-MM-dd'),
+                    arrival_at:Date.today().toString('yyyy-MM-dd'),
+                    entry_at:Date.today().toString('yyyy-MM-dd'),
+                    remark:'',
                     images: [],  //图片
                     product_info:[], //单品
                 },
@@ -321,6 +323,11 @@
         },
 
         created() {
+            axios.get('/admin/api/port').then(response => {
+                this.ship_ports = response.data.data.ship_port
+                this.arrival_ports = response.data.data.arrival_port
+            });
+
             console.log('created')
         },
 
@@ -334,7 +341,28 @@
             $('#packaged_at').on('dp.change', (e) => {
                 this.form_data.packaged_at = e.currentTarget.value;
             });
+            $('#departure_at').on('dp.change', (e) => {
+                this.form_data.departure_at = e.currentTarget.value;
+            });
+            $('#arrival_at').on('dp.change', (e) => {
+                this.form_data.arrival_at = e.currentTarget.value;
+            });
+            $('#entry_at').on('dp.change', (e) => {
+                this.form_data.entry_at = e.currentTarget.value;
+            });
+
+            $('#ship_port').select2().on("change", () => {
+                this.form_data.ship_port = $("#ship_port").val()
+                this.errors.clear('ship_port')
+            });
+            $('#arrival_port').select2().on("change", () => {
+                this.form_data.arrival_port = $("#arrival_port").val()
+                this.errors.clear('arrival_port')
+            });
+
             this.supplierSelect2()
+            this.buyerSelect2()
+            this.customerSelect2()
             this.pictures() //上传图片
         },
 
@@ -359,6 +387,23 @@
                 Common.select(this.edit_data.supplier_id, "#forwarding_company", "/admin/api/forwarding-company", "name", "mobile", true, '请选择货代公司');
                 $("#forwarding_company").on("change", () => {
                     this.form_data.forwarding_company_id = parseInt($("#forwarding_company").val());
+                    this.errors.clear('forwarding_company_id')
+                });
+            },
+
+            buyerSelect2(){
+                Common.select([], "#buyer-select2", "/admin/api/buyer", "name", "mobile", true, '请选择采购商');
+                $("#buyer-select2").on("change", () => {
+                    this.form_data.buyer_id = parseInt($("#buyer-select2").val());
+                    this.errors.clear('buyer_id')
+                });
+            },
+
+            customerSelect2(){
+                Common.select([], "#customer-select2", "/admin/api/customer", "name", "mobile", true, '请选择客户');
+                $("#customer-select2").on("change", () => {
+                    this.form_data.customer_id = parseInt($("#customer-select2").val());
+                    this.errors.clear('customer_id')
                 });
             },
 
