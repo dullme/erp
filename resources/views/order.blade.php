@@ -9,11 +9,33 @@
                 </a>
             </div>
 
-            <div class="pull-right grid-create-btn" style="margin-right: 10px">
-                <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-default">
-                    <i class="fa fa-plus"></i><span class="hidden-xs">&nbsp;&nbsp;验货入库</span>
-                </button>
-            </div>
+            @if($order->status == 0)
+                @if($order->orderBatch->count())
+                    <div class="pull-right grid-create-btn" style="margin-right: 10px">
+                        <button type="button" class="btn btn-sm btn-info" data-id="{{ $order->id }}" id="order-finish">
+                            <i class="fa fa-check"></i><span class="hidden-xs">&nbsp;&nbsp;完结订单</span>
+                        </button>
+                    </div>
+                    @else
+                    <div class="pull-right grid-create-btn" style="margin-right: 10px">
+                        <button type="button" class="btn btn-sm btn-danger" data-id="{{ $order->id }}" id="order-delete">
+                            <i class="fa fa-times"></i><span class="hidden-xs">&nbsp;&nbsp;删除订单</span>
+                        </button>
+                    </div>
+                @endif
+
+                <div class="pull-right grid-create-btn" style="margin-right: 10px">
+                    <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#modal-default">
+                        <i class="fa fa-plus"></i><span class="hidden-xs">&nbsp;&nbsp;验货入库</span>
+                    </button>
+                </div>
+            @else
+                <div class="pull-right grid-create-btn" style="margin-right: 10px;margin-top: 5px">
+                    <i class="fa fa-check text-success"> 订单于 {{ $order->finished_at }} 完结</i>
+                </div>
+            @endif
+
+
         </div>
     </div>
     <!-- /.box-header -->
@@ -39,38 +61,45 @@
                         <th>数量</th>
                         <th>单价</th>
                         <th>合计</th>
+                        <th>验货时间</th>
+                        <th>备注</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($order['product'] as $item)
+                    @foreach($order['orderProduct'] as $item)
                         <tr>
                             <td>
-                                @if($item['image'])
-                                    <img width="100" src="{{ asset('uploads/'.$item['image']) }}">
+                                @if($item['product']['image'])
+                                    <img width="100" src="{{ asset('uploads/'.$item['product']['image']) }}">
                                 @endif
                             </td>
-                            <td>{{ $item['sku'] }}</td>
+                            <td>{{ $item['product']['sku'] }}</td>
                             <td>{{ $item['quantity'] }}</td>
                             <td>{{ $item['price'] }}</td>
-                            <td>{{ $item['total'] }}</td>
+                            <td>{{ round($item['quantity'] * $item['price'], 2) }}</td>
+                            <td>{{ substr($item['inspection_at'],0,10) }}</td>
+                            <td>{{ $item['remark'] }}</td>
                         </tr>
                     @endforeach
-                    <tr>
-                        <td colspan="4"></td>
-                        <td> {{ bigNumber(collect($order['product'])->sum('total'))->getValue() }}</td>
-                    </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        @if($order->product_batch)
+        @if($order->orderBatch)
             <div class="col-lg-8 col-md-12">
-                @foreach($order->product_batch as $key=>$product)
+                @foreach($order->orderBatch as $product)
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <span>第 {{ $key }} 次入库记录</span>
-                            <span style="float: right">入库时间：{{ substr($product[0]['entry_at'],0, 10) }}</span>
+                            <span>第 {{ $product['batch'] }} 次入库记录</span>
+                            <span style="margin-left: 20px">入库时间：{{ substr($product['entry_at'],0, 10) }}</span>
+                            @if(!$product['status'])
+                                <span data-id="{{ $product['id'] }}" style="float: right;margin-top: -5px;margin-left: 10px" class="btn btn-success btn-sm preview">审核</span>
+                                <span data-id="{{ $product['id'] }}" style="float: right;margin-top: -5px;margin-left: 10px" class="btn btn-danger btn-sm preview-delete">删除</span>
+                            @else
+                                <i style="float: right;font-size: 20px"  class="fa fa-check text-success"></i>
+                            @endif
+
                         </div>
                         <table class="table table-bordered text-center">
                             <thead>
@@ -78,12 +107,12 @@
                                 <th>图片</th>
                                 <th>SKU</th>
                                 <th>数量</th>
-                                <th>单价</th>
-                                <th>合计</th>
+{{--                                <th>单价</th>--}}
+{{--                                <th>合计</th>--}}
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($product as $item)
+                            @foreach($product->product_batch as $item)
                                 <tr>
                                     <td>
                                         @if($item['image'])
@@ -92,14 +121,10 @@
                                     </td>
                                     <td>{{ $item['sku'] }}</td>
                                     <td>{{ $item['quantity'] }}</td>
-                                    <td>{{ $item['price'] }}</td>
-                                    <td>{{ $item['total'] }}</td>
+{{--                                    <td>{{ $item['price'] }}</td>--}}
+{{--                                    <td>{{ $item['total'] }}</td>--}}
                                 </tr>
                             @endforeach
-                            <tr>
-                                <td colspan="4"></td>
-                                <td> {{ bigNumber(collect($product)->sum('total'))->getValue() }}</td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -121,8 +146,7 @@
                 <h4 class="modal-title">验货入库</h4>
             </div>
             <div class="modal-body">
-                <warehouse no="{{ $order->no }}" order_id="{{ $order->id }}"
-                           product="{{json_encode($order['product'])}}"></warehouse>
+                <warehouse no="{{ $order->no }}" order_id="{{ $order->id }}"></warehouse>
             </div>
         </div>
         <!-- /.modal-content -->

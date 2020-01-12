@@ -53,4 +53,14 @@ class HomeController extends Controller
 
         return response()->json(Session::all());
     }
+
+    public function changeWeight()
+    {
+        $weight = request()->input('weight');
+
+
+        Session::put('weight', $weight);
+
+        return response()->json(Session::all());
+    }
 }

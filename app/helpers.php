@@ -52,3 +52,13 @@ function getUnit(){
         '枚' => '枚',
     ];
 }
+
+function getHq($hq){
+    $arr = [
+        '28' => '20',
+        '60' => '40',
+        '65' => '40HQ',
+    ];
+
+    return $arr[$hq];
+}

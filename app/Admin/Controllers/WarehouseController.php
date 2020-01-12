@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Order;
+use App\OrderBatch;
 use App\Warehouse;
 use Carbon\Carbon;
 use DB;
@@ -91,10 +92,6 @@ class WarehouseController extends ResponseController
             return $this->setStatusCode(422)->responseError('单品数量必须大于0');
         }
 
-        if ($productInfo->where('price', '<=', 0)->count()) {
-            return $this->setStatusCode(422)->responseError('单品价格必须大于0');
-        }
-
         if ($productInfo->count() < 1) {
             return $this->setStatusCode(422)->responseError('必须添加单品');
         }
@@ -104,65 +101,32 @@ class WarehouseController extends ResponseController
 //            $file = $file->pluck('path')->toArray();
 //            $file = json_encode($file);
 //        }
-        $now = Carbon::now()->toDateTimeString();
-        DB::beginTransaction(); //开启事务
-        try {
-            $order = Order::findOrfail(request()->input('order_id'));
-            $batch = $order->batch + 1;
+        $order = Order::with(['orderBatch'=>function($query){
+            $query->where('status', 0);
+        }])->findOrfail(request()->input('order_id'));
 
-            $productBatch = $productInfo->map(function ($item) use ($batch, $entry_at) {
-                $item['batch'] = $batch;
-                $item['entry_at'] = $entry_at->toDateTimeString();
-                unset($item['deleted']);
-
-                return $item;
-            })->toArray();
-
-            $product_ids = $productInfo->pluck('product_id')->toArray();
-            $real_product = Product::select('id', 'sku', 'image')->find($product_ids);
-
-            $productInfo = $productInfo->groupBy('product_id')->map(function ($item, $index) use ($order, $now, $batch, $real_product, $entry_at) {
-                $item->each(function ($price) use ($item) {
-                    if ($price['price'] != $item[0]['price']) {
-                        throw new \Exception('存在相同单品不同价格');
-                    }
-                });
-
-                $real_pro = $real_product->where('id', $index)->first();
-
-                return [
-                    'order_id'     => $order->id,
-                    'order_batch'  => $batch,
-                    'batch_number' => "{$order->no}-{$real_pro->sku}-{$batch}-{$entry_at->weekOfYear}",
-                    'product_id'   => $index,
-                    'quantity'     => $item->sum('quantity'),
-                    'status'       => 1,
-                    'entry_at'     => $entry_at->toDateTimeString(),
-                    'created_at'   => $now,
-                    'updated_at'   => $now,
-                ];
-            });
-
-            $order->batch = $batch;
-            if ($order->product_batch != null) {
-                $order->product_batch = array_merge($order->product_batch, $productBatch);
-            } else {
-                $order->product_batch = $productBatch;
-            }
-
-            $order->save();
-
-            Warehouse::insert($productInfo->toArray());
-
-            DB::commit();   //保存
-
-            return $this->responseSuccess('添加成功');
-
-        } catch (\Exception $exception) {
-            DB::rollBack(); //回滚
-
-            return $this->setStatusCode(422)->responseError($exception->getMessage());
+        if($order->orderBatch->count()){
+            return $this->setStatusCode(422)->responseError('无法入库，存在待审核的入库记录');
         }
+
+        $productBatch = $productInfo->groupBy('product_id')->map(function ($item) use ($entry_at) {
+            unset($item['deleted']);
+
+            return [
+                'product_id' => $item[0]['product_id'],
+                'quantity'   => $item->sum('quantity'),
+            ];
+        })->toArray();
+
+        OrderBatch::create([
+            'order_id'      => $order->id,
+            'status'        => 0,
+            'batch'         => $order->batch + 1,
+            'product_batch' => $productBatch,
+            'entry_at'      => $entry_at->toDateTimeString(),
+        ]);
+
+        return $this->responseSuccess('添加成功');
     }
 
 

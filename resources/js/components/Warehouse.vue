@@ -36,7 +36,6 @@
                                     <tr>
                                         <th>单品</th>
                                         <th style="width: 100px">数量</th>
-                                        <th style="width: 100px">单价</th>
                                         <th style="width: 100px">操作</th>
                                     </tr>
                                     <tr :id="'product_info'+product_info.id" v-for="(product_info) in form_data.product_info" :key="product_info.length">
@@ -46,10 +45,6 @@
                                         <td>
                                             <input type="text" class="form-control numeric" value="1"
                                                    @keyup="product_info.quantity = $event.target.value" placeholder="数量" >
-                                        </td>
-                                        <td>
-                                            <input :id="'price' + product_info.id" type="text" class="form-control decimal" value="0"
-                                                   @keyup="product_info.price = $event.target.value" placeholder="单价" >
                                         </td>
                                         <td><a class="btn btn-sm btn-danger table-field-remove" @click="deleteproduct(product_info.id)"><i class="fa fa-trash"></i> 删除</a></td>
                                     </tr>
@@ -195,7 +190,7 @@
 
             productInfoSelect2(index){
                 this.$nextTick( ()=> {
-                    Common.select(this.edit_data.product, '#product_id' + index, "/admin/api/product", "name", "text", true, '请选输入关键字', 1, 'zh-CN',
+                    Common.select(this.edit_data.product, '#product_id' + index, "/admin/api/product?order_id="+this.order_id, "name", "text", true, '请选输入关键字', 1, 'zh-CN',
                         function (repo) {
                             if (repo.loading) return '搜索中...';
                             let image = repo['image'] ? "/uploads/"+repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg'
@@ -203,6 +198,7 @@
                                 "<div style='display: flex'>" +
                                 "<div><img width='50px' height='50px' src='"+image+"'></div>" +
                                 "<div style='margin-left: 20px'>" +
+                                "<div>入库状态：" + repo['has'] + "/"+repo['needed']+"</div>" +
                                 "<div>SKU：" + repo['text'] + "</div>" +
                                 "<div>DDP：" + repo['ddp'] + "</div>" +
                                 "<div>描述：" + repo['description'] + "</div>" +
@@ -212,7 +208,7 @@
                         },
                         function (repo) {
                             if (repo['description']) {
-                                let description = repo['description'].length > 20 ? repo['description'].substr(0,20) + '...' : repo['description'];
+                                let description = repo['description'].length > 20 ? repo['description'].substr(0,20) + '...' : repo['description'] + '【入库状态:'+repo['has']+'/'+repo['needed']+'】';
 
                                 return repo['text'] + '：' + description;
                             }
@@ -227,14 +223,6 @@
                             if(value.id == index){
                                 let id = e.target.value;
                                 this.form_data.product_info[key]['product_id'] = id;
-
-                                this.order_product.forEach((o_value, o_key) => {
-                                    if(o_value.id == id){
-                                        this.form_data.product_info[key]['price'] = o_value.price;
-                                        $('#price'+index).val(o_value.price)
-                                    }
-                                })
-
                             }
                         })
                     });
@@ -258,18 +246,12 @@
                         this.setInfoMessage('product_info', '数量必须大于0')
                         return false;
                     }
-
-                    if(last_product_info['price'] <=0){
-                        this.setInfoMessage('product_info', '单价必须大于0')
-                        return false;
-                    }
                 }
 
                 this.form_data.product_info.push({
                     id:'l-' + (++this.info_length),
                     product_id:'',
                     quantity:1,
-                    price:0,
                     deleted:false
                 });
 
@@ -326,7 +308,6 @@
                         for(let i=0,len=this.form_data.product_info.length;i<len;i++){
                             form_data.append('product_info['+i+'][product_id]',this.form_data.product_info[i].product_id)
                             form_data.append('product_info['+i+'][quantity]',this.form_data.product_info[i].quantity)
-                            form_data.append('product_info['+i+'][price]',this.form_data.product_info[i].price)
                             form_data.append('product_info['+i+'][deleted]',this.form_data.product_info[i].deleted)
                         }
                     }else{
@@ -368,6 +349,146 @@
 
         }
     }
+
+    $(function () {
+        $('.preview').on('click', function () {
+            let id = $(this).attr('data-id')
+            swal({
+                title: '确定入库？',
+                text: "确认后无法更改！",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            }).then(function(isConfirm) {
+               if(isConfirm.value == true){
+                   axios({
+                       method: 'post',
+                       url: '/admin/api/order-batch-confirm/'+id,
+                   }).then(response => {
+                       console.log(response);
+                       if (response.data.status) {
+                           swal(
+                               "SUCCESS",
+                               '入库成功！',
+                               'success'
+                           ).then(function () {
+                               location.reload()
+                           });
+                       }else{
+                           toastr.error(response.data.data.message);
+                       }
+
+                   })
+               }
+            })
+        })
+
+
+        $('.preview-delete').on('click', function () {
+            let id = $(this).attr('data-id')
+            swal({
+                title: '确定删除？',
+                text: "删除后无法恢复！",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            }).then(function(isConfirm) {
+                if(isConfirm.value == true){
+                    axios({
+                        method: 'post',
+                        url: '/admin/api/order-batch-confirm/'+id+'/delete',
+                    }).then(response => {
+                        console.log(response);
+                        if (response.data.status) {
+                            swal(
+                                "SUCCESS",
+                                '删除成功！',
+                                'success'
+                            ).then(function () {
+                                location.reload()
+                            });
+                        }else{
+                            toastr.error(response.data.data.message);
+                        }
+
+                    })
+                }
+            })
+        })
+
+        $('#order-finish').on('click', function () {
+            let id = $(this).attr('data-id')
+            swal({
+                title: '确定完结订单？',
+                text: "订单完成后无法再次开启！",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            }).then(function(isConfirm) {
+                if(isConfirm.value == true){
+                    axios({
+                        method: 'post',
+                        url: '/admin/api/order/finish/'+id,
+                    }).then(response => {
+                        console.log(response);
+                        if (response.data.status) {
+                            swal(
+                                "SUCCESS",
+                                '订单已完结！',
+                                'success'
+                            ).then(function () {
+                                location.reload()
+                            });
+                        }else{
+                            toastr.error(response.data.data.message);
+                        }
+
+                    }).catch(error => {
+                        toastr.error(error.response.data.message);
+                    });
+                }
+            })
+        })
+
+        $('#order-delete').on('click', function () {
+            let id = $(this).attr('data-id')
+            swal({
+                title: '确定删除订单？',
+                text: "订单删除后无法恢复！",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消'
+            }).then(function(isConfirm) {
+                if(isConfirm.value == true){
+                    axios({
+                        method: 'post',
+                        url: '/admin/api/order/delete/'+id,
+                    }).then(response => {
+                        console.log(response);
+                        if (response.data.status) {
+                            swal(
+                                "SUCCESS",
+                                '删除成功！',
+                                'success'
+                            ).then(function () {
+                                location.href="/admin/orders"
+                            });
+                        }else{
+                            toastr.error(response.data.data.message);
+                        }
+
+                    }).catch(error => {
+                        toastr.error(error.response.data.message);
+                    });
+                }
+            })
+        })
+    })
+
 </script>
 
 <style>

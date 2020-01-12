@@ -2,8 +2,33 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9dd538f9-68bf-44f8-9acc-19f55716d661" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/Admin/helpers.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/js/my.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/ForwardingCompanyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/ForwardingCompanyController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/HomeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/OrderController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/OrderController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/ProductController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/SupplierController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/SupplierController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseCompanyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseCompanyController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/WarehouseController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/bootstrap.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/bootstrap.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Admin/routes.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/routes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Order.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_12_21_150109_create_orders_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_12_21_150109_create_orders_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_01_03_145335_create_suppliers_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_01_03_145335_create_suppliers_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_01_05_123727_create_packages_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_01_02_123727_create_packages_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_01_05_124101_create_forwarding_companies_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_01_05_124101_create_forwarding_companies_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_01_05_210745_create_warehouse_companies_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_01_05_210745_create_warehouse_companies_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/Order.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Order.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/Package.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Package.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/js/components/Warehouse.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Warehouse.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/change_hq.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/change_hq.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/order.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/order.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +45,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -158,18 +184,18 @@
     <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/views" />
+      <recent name="$PROJECT_DIR$/resources/js/components" />
+      <recent name="$PROJECT_DIR$/storage/app/test" />
+      <recent name="$PROJECT_DIR$/app/Admin/Extensions" />
+      <recent name="$PROJECT_DIR$/public/vendor" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/resources/views" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
       <recent name="$PROJECT_DIR$/resources/js" />
       <recent name="$PROJECT_DIR$/public" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/resources/views" />
-      <recent name="$PROJECT_DIR$/storage/app/test" />
-      <recent name="$PROJECT_DIR$/app/Admin/Extensions" />
-      <recent name="$PROJECT_DIR$/resources/js/components" />
-      <recent name="$PROJECT_DIR$/public/vendor" />
     </key>
   </component>
   <component name="RunManager">
@@ -216,6 +242,9 @@
       <workItem from="1578125929572" duration="134000" />
       <workItem from="1578141896179" duration="66747000" />
       <workItem from="1578463006706" duration="228000" />
+      <workItem from="1578554466372" duration="319000" />
+      <workItem from="1578554792783" duration="134000" />
+      <workItem from="1578624875963" duration="32459000" />
     </task>
     <servers />
   </component>
@@ -223,6 +252,10 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="360" y="203" width="1336" height="804" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1578554922512">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="360" y="203" width="1336" height="804" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1578554922512" />
     <state x="250" y="226" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1576171438370">
       <screen x="0" y="0" width="1280" height="800" />
     </state>
@@ -235,10 +268,22 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="573" y="194" key="#com.jetbrains.php.actions.copyPaste.importReferences.PhpImportReferencesDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1578391238119" />
+    <state x="381" y="88" key="#phpunit.xml" timestamp="1578554915901">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="381" y="88" key="#phpunit.xml/0.0.1792.1120@0.0.1792.1120" timestamp="1578554915901" />
+    <state x="279" y="22" key="CommitChangelistDialog2" timestamp="1578750278650">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="279" y="22" key="CommitChangelistDialog2/0.0.1792.1120@0.0.1792.1120" timestamp="1578750278650" />
     <state x="356" y="198" key="NewPhpClassDialog" timestamp="1576812946698">
       <screen x="0" y="0" width="1280" height="800" />
     </state>
     <state x="356" y="198" key="NewPhpClassDialog/0.0.1280.800@0.0.1280.800" timestamp="1576812946698" />
+    <state x="637" y="470" key="NewPhpFileDialog" timestamp="1578755030603">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="637" y="470" key="NewPhpFileDialog/0.0.1792.1120@0.0.1792.1120" timestamp="1578755030603" />
     <state x="602" y="0" key="RollbackChangesDialog" timestamp="1578388061169">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -249,11 +294,20 @@
     </state>
     <state x="0" y="0" key="SettingsEditor/0.0.1280.800@0.0.1280.800" timestamp="1576171557486" />
     <state x="0" y="0" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1576676721602" />
-    <state width="801" height="600" key="SwitcherDM" timestamp="1578408125520">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state width="750" height="623" key="SwitcherDM" timestamp="1578820140785">
+      <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state width="750" height="600" key="SwitcherDM/0.0.1280.800@0.0.1280.800" timestamp="1577280216539" />
+    <state width="750" height="623" key="SwitcherDM/0.0.1792.1120@0.0.1792.1120" timestamp="1578820140785" />
     <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1578408125520" />
+    <state x="574" y="449" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1578750276175">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="574" y="449" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1792.1120@0.0.1792.1120" timestamp="1578750276175" />
+    <state x="100" y="100" width="1592" height="920" key="dock-window-1" timestamp="1578728001930">
+      <screen x="0" y="0" width="1792" height="1120" />
+    </state>
+    <state x="100" y="100" width="1592" height="920" key="dock-window-1/0.0.1792.1120@0.0.1792.1120" timestamp="1578728001930" />
     <state x="364" y="130" width="1192" height="820" key="find.popup" timestamp="1578404820551">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

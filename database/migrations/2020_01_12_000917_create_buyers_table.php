@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSuppliersTable extends Migration
+class CreateBuyersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateSuppliersTable extends Migration
      */
     public function up()
     {
-        Schema::create('suppliers', function (Blueprint $table) {
+        Schema::create('buyers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique()->comment('名称');
             $table->string('english_name')->nullable()->comment('英文名称');
@@ -31,7 +31,6 @@ class CreateSuppliersTable extends Migration
             $table->string('bank_account')->nullable()->comment('银行账号');
             $table->string('register')->nullable()->comment('登记');
             $table->text('remark')->nullable()->comment('备注');
-            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -43,6 +42,6 @@ class CreateSuppliersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('buyers');
     }
 }

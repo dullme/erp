@@ -62,6 +62,38 @@
     </div><!-- /.modal -->
 </div>
 
+
+<div class="modal fade " id="change_weight" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    单位
+                </h4>
+            </div>
+            <form class="form-horizontal" id="weightForm">
+                <div class="modal-body">
+                    <div class="box-body" style="margin-top: 10px">
+                        <p><select id="weight_value" class="form-control" >
+                                <option value="kg" {{ session('weight', 'kg') == 'kg' ?'selected="selected"' :'' }}>千克</option>
+                                <option value="lb" {{ session('weight', 'kg') == 'lb' ?'selected="selected"' :'' }}>磅</option>
+                            </select></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                    </button>
+                    <button type="submit" class="btn btn-primary">修改</button>
+                </div>
+            </form>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
 <script type="text/javascript">
     $(function(){
         $('#hq_value').select2();
@@ -114,6 +146,47 @@
                 url: '/admin/api/change-unit',
                 data: {
                     unit:$('#unit_value').val(),
+                }
+            }).then(response => {
+
+                if(response.data){
+                    swal(
+                        "SUCCESS",
+                        '修改成功！',
+                        'success'
+                    ).then(function () {
+                        location.reload()
+                    });
+                }else{
+                    swal(
+                        "INFO",
+                        '修改失败！',
+                        'info'
+                    )
+                }
+            }).catch(error => {
+                swal(
+                    "INFO",
+                    '出错啦！',
+                    'info'
+                )
+            });
+
+            return false;
+            // 直接在事件处理程序中返回false
+        });
+
+
+        $('#weight_value').select2();
+
+        $('#weightForm').submit(function (event) {
+            event.preventDefault();
+
+            axios({
+                method: 'post',
+                url: '/admin/api/change-weight',
+                data: {
+                    weight:$('#weight_value').val(),
                 }
             }).then(response => {
 

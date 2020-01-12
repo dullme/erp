@@ -13,6 +13,7 @@ Route::group([
     $router->get('/', 'HomeController@index')->name('admin.home');
     $router->post('/api/change-hq', 'HomeController@changeHq');
     $router->post('/api/change-unit', 'HomeController@changeUnit');
+    $router->post('/api/change-weight', 'HomeController@changeWeight');
 
     //单品管理
     $router->resource('products', ProductController::class);
@@ -24,6 +25,10 @@ Route::group([
 
     //订单管理
     $router->resource('orders', OrderController::class);
+    $router->post('api/order/delete/{id}', 'OrderController@deleteOrder');
+    $router->post('api/order/finish/{id}', 'OrderController@finishOrder');
+    $router->post('api/order-batch-confirm/{id}', 'OrderController@confirmOrderBatch');
+    $router->post('api/order-batch-confirm/{id}/delete', 'OrderController@deleteOrderBatch');
 
     //库存管理
     $router->resource('warehouses', WarehouseController::class);
@@ -42,6 +47,13 @@ Route::group([
     //货代
     $router->resource('forwarding-companies', ForwardingCompanyController::class);
     $router->get('api/forwarding-company', 'ForwardingCompanyController@forwardingCompany');
+
+    //客户
+    $router->resource('customers', CustomerController::class);
+    //采购商
+    $router->resource('buyers', BuyerController::class);
+    //港口
+    $router->resource('ports', PortController::class);
 
     //仓储公司
     $router->resource('warehouse-companies', WarehouseCompanyController::class);

@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Extensions\ButtonUpdateControl;
+use App\Order;
 use App\Product;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -41,50 +42,44 @@ class ProductController extends AdminController
         $grid = new Grid(new Product);
 
         $session_hq = Session::get('hq', config('hq'));
-        $unit_text = Session::get('unit', 'cm') == 'in' ? '英寸' : '厘米';
-        $unit_text2 = Session::get('unit', 'cm') == 'in' ? '立方英尺' : '立方米';
+        $unit_text = Session::get('unit', 'cm') == 'in' ? 'cu ft' : 'm³';
         $session_unit = Session::get('unit', 'cm');
+        $session_weight = Session::get('weight', 'kg');
 
 //        $grid->column('id', __('ID'));
         $grid->column('sku', __('SKU'));
         $grid->column('image', __('图片'))->image();
         $grid->column('description', __('描述'));
-        $grid->column('length', __('长（' . $unit_text . '）'))->display(function ($length) use ($session_unit) {
-            if ($session_unit == 'in') {
-                return round($length * config('in'), 2) . ' in';
-            }
-
-            return $length . ' cm';
+        $grid->column('length', __('长（' . $session_unit . '）'))->display(function ($length) use ($session_unit) {
+            return $session_unit == 'in' ? round($length * config('in'), 2) : $length;
         });
-        $grid->column('width', __('宽（' . $unit_text . '）'))->display(function ($width) use ($session_unit) {
-            if ($session_unit == 'in') {
-                return round($width * config('in'), 2) . ' in';
-            }
-
-            return $width . ' cm';
+        $grid->column('width', __('宽（' . $session_unit . '）'))->display(function ($width) use ($session_unit) {
+            return $session_unit == 'in' ? round($width * config('in'), 2) : $width;
         });
-        $grid->column('height', __('高（' . $unit_text . '）'))->display(function ($height) use ($session_unit) {
+        $grid->column('height', __('高（' . $session_unit . '）'))->display(function ($height) use ($session_unit) {
             if ($session_unit == 'in') {
                 return round($height * config('in'), 2) . ' in';
             }
 
-            return $height . ' cm';
+            return $session_unit == 'in' ? round($height * config('in'), 2) : $height;
         });
-        $grid->column('volume', '体积（'.$unit_text2.'）')->display(function () use ($session_unit) {
+        $grid->column('volume', '体积（'.$unit_text.'）')->display(function () use ($session_unit) {
             $volume = $this->length * $this->width * $this->height / 1000000;
             if ($session_unit == 'in') {
                 $volume = $volume * config('cuft');
-                return round($volume, 2) . ' cu ft';
+                return round($volume, 2);
             }
 
-            return round($volume, 2) . ' m³';
+            return round($volume, 2);
         });
-        $grid->column('weight', __('毛重（公斤）'));
+        $grid->column('weight', __('毛重（'.$session_weight.'）'))->display(function ($weight) use($session_weight){
+            return $session_weight == 'kg' ? $weight : round(config('lb') * $weight, 2);
+        });
         $grid->column('coefficient', '系数')->display(function () {
-            return ($this->width + $this->height) * 2 + $this->length . ' kg';
+            return ($this->width + $this->height) * 2 + $this->length;
         });
 
-        $grid->column('hq', $session_hq . ' HQ')->display(function ($hq) use ($session_hq) {
+        $grid->column('hq', getHq($session_hq))->display(function ($hq) use ($session_hq) {
             if ($hq) {
                 return $hq . " <i class='fa fa-check text-success'></i>";
             }
@@ -108,11 +103,15 @@ class ProductController extends AdminController
 
         $grid->tools(function ($tools) use ($session_hq) {
 
-            $tools->append('<a class="btn btn-sm btn-success pull-right p_update_control" data-toggle="modal" data-target="#change_hq"><i class="fa fa-chain"></i> <span class="hidden-xs">' . $session_hq . ' HQ</span></a>');
+            $tools->append('<a class="btn btn-sm btn-success pull-right p_update_control" data-toggle="modal" data-target="#change_hq"><i class="fa fa-chain"></i> <span class="hidden-xs">' . getHq($session_hq) . '</span></a>');
 
             $unit_text = Session::get('unit', 'cm') == 'cm' ? '厘米' : '英寸';
 
             $tools->append('<a style="margin-right: 5px" class="btn btn-sm btn-info pull-right p_update_control" data-toggle="modal" data-target="#change_unit"><i class="fa fa-codepen"></i> <span class="hidden-xs">' . $unit_text . '</span></a>');
+
+            $weight_text = Session::get('weight', 'kg') == 'kg' ? '千克' : '磅';
+
+            $tools->append('<a style="margin-right: 5px" class="btn btn-sm btn-warning pull-right p_update_control" data-toggle="modal" data-target="#change_weight"><i class="fa fa-balance-scale"></i> <span class="hidden-xs">' . $weight_text . '</span></a>');
         });
 
         return $grid;
@@ -170,9 +169,21 @@ class ProductController extends AdminController
     public function product()
     {
         $q = request()->input('q');
+        $order_id = request()->input('order_id');
         $products = Product::where('sku', 'like', '%' . $q . '%')
             ->orWhere('description', 'like', '%' . $q . '%')
             ->select('id', 'sku as text', 'description', 'ddp', 'image')->get();
+
+        if($order_id){
+            $order = Order::with('orderProduct', 'warehouses')->find($order_id);
+            $products->map(function ($item)use($order){
+                $item['needed'] = $order->orderProduct->where('product_id',$item['id'])->sum('quantity');
+                $item['has'] = $order->warehouses->where('product_id',$item['id'])->sum('quantity');
+                $item['need'] = $item['needed'] - $item['has'];
+
+                return $item;
+            });
+        }
 
         return response()->json($products);
     }

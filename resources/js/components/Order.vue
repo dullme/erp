@@ -80,7 +80,9 @@
                                         <th>单品</th>
                                         <th style="width: 100px">数量</th>
                                         <th style="width: 100px">单价</th>
-                                        <th style="width: 100px">操作</th>
+                                        <th style="width: 100px">验货时间</th>
+                                        <th style="width: 200px"></th>
+                                        <th style="width: 50px">操作</th>
                                     </tr>
                                     <tr :id="'product_info'+product_info.id" v-for="(product_info) in form_data.product_info" :key="product_info.length">
                                         <td>
@@ -93,6 +95,12 @@
                                         <td>
                                             <input type="text" class="form-control decimal" value="0"
                                                    @keyup="product_info.price = $event.target.value" placeholder="单价" >
+                                        </td>
+                                        <td>
+                                            <input type="date" class="form-control" value="0" v-model="product_info.inspection_at" placeholder="验货时间" >
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" value="" v-model="product_info.remark" placeholder="备注" >
                                         </td>
                                         <td><a class="btn btn-sm btn-danger table-field-remove" @click="deleteproduct(product_info.id)"><i class="fa fa-trash"></i> 删除</a></td>
                                     </tr>
@@ -295,6 +303,8 @@
                     product_id:'',
                     quantity:1,
                     price:0,
+                    inspection_at:'',
+                    remark:'',
                     deleted:false
                 });
 
@@ -352,6 +362,8 @@
                             form_data.append('product_info['+i+'][product_id]',this.form_data.product_info[i].product_id)
                             form_data.append('product_info['+i+'][quantity]',this.form_data.product_info[i].quantity)
                             form_data.append('product_info['+i+'][price]',this.form_data.product_info[i].price)
+                            form_data.append('product_info['+i+'][inspection_at]',this.form_data.product_info[i].inspection_at)
+                            form_data.append('product_info['+i+'][remark]',this.form_data.product_info[i].remark)
                             form_data.append('product_info['+i+'][deleted]',this.form_data.product_info[i].deleted)
                         }
                     }else{

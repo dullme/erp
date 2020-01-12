@@ -17,6 +17,11 @@
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
+include_once 'helpers.php';
 
 Encore\Admin\Form::forget(['map', 'editor']);
 Encore\Admin\Admin::js('/js/admin.js');
+
+ignore_pjax_paths([
+    'orders\/.*',
+]);

@@ -2,20 +2,20 @@
 
 namespace App\Admin\Controllers;
 
-use App\WarehouseCompany;
+use App\Buyer;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
-class WarehouseCompanyController extends AdminController
+class BuyerController extends AdminController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = '仓储公司';
+    protected $title = '采购商';
 
     /**
      * Make a grid builder.
@@ -24,7 +24,7 @@ class WarehouseCompanyController extends AdminController
      */
     protected function grid()
     {
-        $grid = new Grid(new WarehouseCompany);
+        $grid = new Grid(new Buyer);
         $grid->model()->orderByDesc('id');
         $grid->disableExport();
         $grid->disableRowSelector();
@@ -63,7 +63,7 @@ class WarehouseCompanyController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(WarehouseCompany::findOrFail($id));
+        $show = new Show(Buyer::findOrFail($id));
 
         $show->field('name', __('名称'));
         $show->field('english_name', __('英文名称'));
@@ -92,7 +92,7 @@ class WarehouseCompanyController extends AdminController
      */
     protected function form()
     {
-        $form = new Form(new WarehouseCompany);
+        $form = new Form(new Buyer);
 
         $form->text('name', __('名称'));
         $form->text('english_name', __('英文名称'));
@@ -112,12 +112,5 @@ class WarehouseCompanyController extends AdminController
         $form->textarea('remark', __('备注'));
 
         return $form;
-    }
-
-    public function warehouseCompany()
-    {
-        $warehouseCompany = WarehouseCompany::select('id','name as text')->get();
-
-        return response()->json($warehouseCompany);
     }
 }

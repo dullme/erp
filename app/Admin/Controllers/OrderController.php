@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\OrderBatch;
+use App\OrderProduct;
 use App\Product;
 use App\Supplier;
 use DB;
@@ -41,18 +43,20 @@ class OrderController extends ResponseController
             $filter->equal('no', '订单编号');
             $suppliers = Supplier::pluck('name', 'id');
             $filter->equal('supplier_id', '供应商')->select($suppliers);
+            $filter->equal('status', '状态')->select([0=>'进行中', 1=>'已完成']);
         });
 
 //        $grid->column('id', __('ID'));
-        $grid->column('no', __('订单编号'))->display(function (){
-            $url = url('/admin/orders/'.$this->id);
+        $grid->column('no', __('订单编号'))->display(function () {
+            $url = url('/admin/orders/' . $this->id);
+
             return "<a href='{$url}'>{$this->no}</a>";
         });
         $grid->supplier()->name('供应商');
         $grid->column('signing_at', __('签订日'));
-        $grid->column('product', __('SKU:数量'))->display(function ($product) {
-            $products = Product::find(collect($product)->pluck('product_id'));
-            $product = collect($product)->map(function ($item) use ($products) {
+        $grid->column('product', __('SKU:数量'))->display(function () {
+            $products = Product::find($this->orderProduct->pluck('product_id'));
+            $product = $this->orderProduct->map(function ($item) use ($products) {
                 $res = $products->where('id', $item['product_id'])->first();
 
                 return "{$res->sku}:{$item['quantity']}";
@@ -60,7 +64,12 @@ class OrderController extends ResponseController
 
             return implode("|", $product);
         });
-//        $grid->column('remark', __('备注'));
+        $grid->column('status', __('状态'))->display(function ($status){
+            if($status == 0){
+                return "<span class='label label-danger'>进行中</span>";
+            }
+            return "<span class='label label-success' data-toggle=\"tooltip\" data-placement=\"top\" title=\"\" data-original-title='{$this->finished_at}'>已完成</span>";
+        });
 //        $grid->column('created_at', __('添加时间'));
 //        $grid->column('updated_at', __('Updated at'));
 
@@ -87,32 +96,21 @@ class OrderController extends ResponseController
     {
         $this->loadVue();
 
-        $order = Order::with('supplier')->findOrFail($id);
-        $product_ids = collect($order->product)->pluck('product_id')->toArray();
-        $real_product = Product::select('id', 'sku', 'image')->find($product_ids);
-        $order->product = collect($order->product)->map(function ($item) use ($real_product) {
-            $res = $real_product->where('id', $item['product_id'])->first()->toArray();
+        $order = Order::with('supplier', 'orderProduct.product:id,sku,image', 'orderBatch')->findOrFail($id);
 
-            return array_merge($res, [
-                'quantity' => $item['quantity'],
-                'price'    => bigNumber($item['price'])->getValue(),
-                'total'    => bigNumber($item['quantity'] * $item['price'])->getValue()
-            ]);
-        });
+        if($order->orderBatch->count()){
+            $product_batch_ids = $order->orderBatch->pluck('product_batch')->flatten(1)->pluck('product_id')->unique()->values()->toArray();
+            $real_product_batch = Product::select('id', 'sku', 'image')->find($product_batch_ids);
 
-        $product_batch_ids = collect($order->product_batch)->groupBy('product_id')->keys();
-        $real_product_batch = Product::select('id', 'sku', 'image')->find($product_batch_ids);
-        $order->product_batch = collect($order->product_batch)->map(function ($item) use ($real_product_batch) {
-            $res = $real_product_batch->where('id', $item['product_id'])->first()->toArray();
+            $order->orderBatch->map(function ($item) use ($real_product_batch) {
+                $item['product_batch'] = collect($item->product_batch)->map(function ($product) use ($real_product_batch){
 
-            return array_merge($res, [
-                'batch'      => $item['batch'],
-                'entry_at' => $item['entry_at'],
-                'quantity'   => $item['quantity'],
-                'price'      => bigNumber($item['price'])->getValue(),
-                'total'      => bigNumber($item['quantity'] * $item['price'])->getValue()
-            ]);
-        })->groupBy('batch')->reverse();
+                    return array_merge($real_product_batch->where('id', $product['product_id'])->first()->toArray(),$product);
+                });
+
+                return $item;
+            });
+        }
 
         return view('order', compact('order'));
     }
@@ -137,7 +135,7 @@ class OrderController extends ResponseController
     {
         $this->loadVue();
 
-        return $content->header('订单管理')
+        return $content->header('订购入库')
             ->description('创建')
             ->body('<order></order>');
     }
@@ -179,28 +177,31 @@ class OrderController extends ResponseController
 //        }
 
         DB::beginTransaction(); //开启事务
+        $now = Carbon::now()->toDateTimeString();
         try {
-            $productInfo = $productInfo->groupBy('product_id')->map(function ($item, $index) {
-                $item->each(function ($price) use ($item) {
-                    if ($price['price'] != $item[0]['price']) {
-                        throw new \Exception('存在相同单品不同价格');
-                    }
-                });
-
-                return [
-                    'product_id' => $index,
-                    'quantity'   => $item->sum('quantity'),
-                    'price'      => round($item[0]['price'], 2),
-                ];
-            });
-
-            Order::create([
+            $order = Order::create([
                 'no'          => request()->input('no'),
                 'supplier_id' => request()->input('supplier_id'),
-                'product'     => $productInfo->values(),
                 'signing_at'  => request()->input('signing_at'),
                 'remark'      => request()->input('remark'),
             ]);
+
+            $productInfo = $productInfo->map(function ($item) use ($order, $now) {
+
+                return [
+                    'order_id'      => $order->id,
+                    'product_id'    => $item['product_id'],
+                    'quantity'      => $item['quantity'],
+                    'price'         => $item['price'],
+                    'inspection_at' => $item['inspection_at'],
+                    'remark'        => $item['remark'],
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ];
+            });
+
+            OrderProduct::insert($productInfo->toArray());
+
             DB::commit();   //保存
 
             return $this->responseSuccess('添加成功');
@@ -211,5 +212,95 @@ class OrderController extends ResponseController
             return $this->setStatusCode(422)->responseError($exception->getMessage());
         }
 
+    }
+
+    public function deleteOrder($id)
+    {
+        $order = Order::with('orderBatch')->findOrFail($id);
+
+        if($order->orderBatch->count()){
+            return $this->setStatusCode(422)->responseError('存在入库记录无法删除');
+        }
+
+        $order->delete();
+
+        return $this->responseSuccess(true);
+    }
+
+
+    public function deleteOrderBatch($id)
+    {
+        $orderBatch = OrderBatch::where('status', 0)->findOrFail($id);
+        $orderBatch->delete();
+
+        return $this->responseSuccess(true);
+    }
+
+    public function confirmOrderBatch($id)
+    {
+        DB::beginTransaction(); //开启事务
+        $now = Carbon::now()->toDateTimeString();
+        try {
+
+            $orderBatch = OrderBatch::where('status', 0)->findOrFail($id);
+            $orderBatch->status = 1;
+            $orderBatch->save();
+
+            $order = Order::find($orderBatch->order_id);
+            $order->batch = ++$order->batch;
+            $order->save();
+
+            $products = Product::whereIn('id', collect($orderBatch->product_batch)->groupBy('product_id')->keys()->toArray())->pluck('sku', 'id');
+
+            $productInfo = collect($orderBatch->product_batch)->map(function ($item) use($order, $products, $orderBatch, $now){
+                $sku = $products[$item['product_id']];
+                $entry_at = Carbon::parse($orderBatch->entry_at);
+                return [
+                    'order_id'     => $order->id,
+                    'order_batch'  => $order->batch,
+                    'batch_number' => "{$order->no}-{$sku}-{$order->batch}-{$entry_at->weekOfYear}",
+                    'product_id'   => $item['product_id'],
+                    'quantity'     => $item['quantity'],
+                    'status'       => 1,
+                    'entry_at'     => $entry_at->toDateTimeString(),
+                    'created_at'   => $now,
+                    'updated_at'   => $now,
+                ];
+            });
+
+            Warehouse::insert($productInfo->toArray());
+
+            DB::commit();   //保存
+
+            return $this->responseSuccess('添加成功');
+
+        } catch (\Exception $exception) {
+            DB::rollBack(); //回滚
+
+            return $this->setStatusCode(422)->responseError($exception->getMessage());
+        }
+    }
+
+    public function finishOrder($id)
+    {
+        $order = Order::with('orderBatch')->findOrFail($id);
+
+        if($order->status != 0){
+            return $this->setStatusCode(422)->responseError('订单状态错误');
+        }
+
+        if($order->orderBatch->count() == 0){
+            return $this->setStatusCode(422)->responseError('该订单还未入库无法完结');
+        }
+
+        if($order->orderBatch->where('status', 0)->count()){
+            return $this->setStatusCode(422)->responseError('存在待审核的订单');
+        }
+
+        $order->status = 1;
+        $order->finished_at = Carbon::now();
+        $order->save();
+
+        return $this->responseSuccess(true);
     }
 }

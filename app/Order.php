@@ -9,20 +9,35 @@ class Order extends Model
     protected $fillable = [
         'supplier_id',
         'no',
+        'status',
         'batch',
         'product_batch',
-        'product',
         'signing_at',
         'remark',
+        'finished_at',
     ];
 
     protected $casts = [
-        'product'     => 'array',
         'product_batch'     => 'array',
     ];
+
+    public function orderProduct()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
+
+    public function warehouses()
+    {
+        return $this->hasMany(Warehouse::class);
+    }
 
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function orderBatch()
+    {
+        return $this->hasMany(OrderBatch::class)->orderBy('id', 'DESC');
     }
 }
