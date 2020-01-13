@@ -79,7 +79,7 @@ class ProductController extends AdminController
             return ($this->width + $this->height) * 2 + $this->length;
         });
 
-        $grid->column('hq', getHq($session_hq))->display(function ($hq) use ($session_hq) {
+        $grid->column('hq', '箱规'.getHq($session_hq))->display(function ($hq) use ($session_hq) {
             if ($hq) {
                 return $hq . " <i class='fa fa-check text-success'></i>";
             }

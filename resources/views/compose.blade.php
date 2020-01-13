@@ -23,7 +23,7 @@
                 <p>组合名称：{{ $compose->name }}</p>
                 <p>ASIN：{{ $compose->asin }}</p>
                 <p>箱数：{{ $compose->composeProducts->sum('quantity') }}</p>
-                <p>{{$session_hq}} HQ：{!! $compose->hq ? $compose->hq . " <i class='fa fa-check text-success'></i>"  : round($session_hq/$compose->composeProducts->sum('volume'), 0) !!}</p>
+                <p>{{ '箱规'.getHq($session_hq) }}：{!! $compose->hq ? $compose->hq . " <i class='fa fa-check text-success'></i>"  : round($session_hq/$compose->composeProducts->sum('volume'), 0) !!}</p>
                 <p>DDP：{{ $compose->composeProducts->sum('ddp') }}</p>
             </div>
         </div>

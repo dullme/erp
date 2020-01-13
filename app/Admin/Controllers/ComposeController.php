@@ -56,13 +56,15 @@ class ComposeController extends ResponseController
             return $image;
         })->image('', 100, 100);
         $grid->column('name', __('组合名称'))->display(function ($name) {
-            return "<a href='/admin/composes/{$this->id}'>{$name}</a>";
+            $short = mb_substr($name,0, 20);
+
+            return "<a href='/admin/composes/{$this->id}' data-toggle='tooltip' data-placement='top\' title='' data-original-title='{$name}'>{$short}</a>";
         });
         $grid->column('box', '箱数')->display(function () {
             return $this->composeProducts->sum('quantity');
         });
 
-        $grid->column('hq', $session_hq . ' HQ')->display(function ($hq) use ($session_hq) {
+        $grid->column('hq', '箱规'.getHq($session_hq))->display(function ($hq) use ($session_hq) {
             if ($hq) {
                 return $hq . " <i class='fa fa-check text-success'></i>";
             }
