@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9dd538f9-68bf-44f8-9acc-19f55716d661" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Admin/Controllers/ProductController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Admin/Controllers/ProductController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/database.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/database.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_12_17_131454_create_products_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_12_17_131454_create_products_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/filesystems.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/filesystems.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -222,7 +222,7 @@
       <workItem from="1578463006706" duration="228000" />
       <workItem from="1578554466372" duration="319000" />
       <workItem from="1578554792783" duration="134000" />
-      <workItem from="1578624875963" duration="49592000" />
+      <workItem from="1578624875963" duration="51172000" />
     </task>
     <servers />
   </component>
@@ -281,12 +281,12 @@
     </state>
     <state x="0" y="0" key="SettingsEditor/0.0.1280.800@0.0.1280.800" timestamp="1576171557486" />
     <state x="0" y="0" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1576676721602" />
-    <state width="750" height="600" key="SwitcherDM" timestamp="1578883616716">
-      <screen x="0" y="0" width="1024" height="768" />
+    <state width="750" height="623" key="SwitcherDM" timestamp="1578995358601">
+      <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state width="750" height="600" key="SwitcherDM/0.0.1024.768@0.0.1024.768" timestamp="1578883616716" />
     <state width="750" height="600" key="SwitcherDM/0.0.1280.800@0.0.1280.800" timestamp="1577280216539" />
-    <state width="750" height="623" key="SwitcherDM/0.0.1792.1120@0.0.1792.1120" timestamp="1578845622630" />
+    <state width="750" height="623" key="SwitcherDM/0.0.1792.1120@0.0.1792.1120" timestamp="1578995358601" />
     <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1578408125520" />
     <state x="574" y="449" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1578750276175">
       <screen x="0" y="0" width="1792" height="1120" />
@@ -296,9 +296,10 @@
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state x="100" y="100" width="1592" height="920" key="dock-window-1/0.0.1792.1120@0.0.1792.1120" timestamp="1578728001930" />
-    <state x="364" y="130" width="1192" height="820" key="find.popup" timestamp="1578404820551">
-      <screen x="0" y="0" width="1920" height="1080" />
+    <state x="340" y="135" width="1113" height="851" key="find.popup" timestamp="1578995221722">
+      <screen x="0" y="0" width="1792" height="1120" />
     </state>
+    <state x="340" y="135" width="1113" height="851" key="find.popup/0.0.1792.1120@0.0.1792.1120" timestamp="1578995221722" />
     <state x="364" y="130" width="1192" height="820" key="find.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1578404820551" />
   </component>
 </project>

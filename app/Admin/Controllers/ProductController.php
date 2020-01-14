@@ -134,10 +134,10 @@ class ProductController extends AdminController
         $show->field('height', __('高（厘米）'));
         $show->field('weight', __('毛重（公斤）'));
         $show->field('ddp', __('DDP'));
-        $show->field('image', __('图片'));
+        $show->field('image', __('图片'))->image();
         $show->field('description', __('描述'));
         $show->field('created_at', __('添加时间'));
-        $show->field('content', __('详情'));
+        $show->field('content', __('详情'))->unescape();
 
         return $show;
     }
