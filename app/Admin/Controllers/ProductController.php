@@ -152,9 +152,9 @@ class ProductController extends AdminController
         $form = new Form(new Product);
 
         $form->text('sku', __('SKU'));
-        $form->number('length', __('长（厘米）'));
-        $form->number('width', __('宽（厘米）'));
-        $form->number('height', __('高（厘米）'));
+        $form->decimal('length', __('长（厘米）'));
+        $form->decimal('width', __('宽（厘米）'));
+        $form->decimal('height', __('高（厘米）'));
         $form->decimal('weight', __('毛重（公斤）'));
         $form->number('ddp', __('DDP'));
         $form->text('hq', __('HQ'));

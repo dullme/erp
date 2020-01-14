@@ -16,9 +16,9 @@ class CreateProductsTable extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('sku')->unique();
-            $table->integer('length')->comment('长');
-            $table->integer('width')->comment('宽');
-            $table->integer('height')->comment('高');
+            $table->decimal('length', 10, 2)->comment('长');
+            $table->decimal('width', 10, 2)->comment('宽');
+            $table->decimal('height', 10, 2)->comment('高');
             $table->decimal('weight', 10, 2)->comment('重量');
             $table->integer('ddp')->comment('价格');
             $table->string('hq')->nullable()->comment('hq');
