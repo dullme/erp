@@ -309,7 +309,7 @@
                     }
                 }
 
-                let url = '/admin/composes/'
+                let url = '/admin/composes'
 
                 axios({
                     method: 'post',
