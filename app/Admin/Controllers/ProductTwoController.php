@@ -2,7 +2,6 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Extensions\ButtonUpdateControl;
 use App\Order;
 use App\Product;
 use Encore\Admin\Controllers\AdminController;
@@ -12,9 +11,8 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Session;
 
-class ProductController extends AdminController
+class ProductTwoController extends AdminController
 {
-
     /**
      * Title for current resource.
      *
@@ -155,17 +153,19 @@ class ProductController extends AdminController
     {
         $form = new Form(new Product);
 
-        $form->text('sku', __('SKU'))->rules(['required', "unique:products"]);
-//        $form->decimal('length', __('长（厘米）'));
-//        $form->decimal('width', __('宽（厘米）'));
-//        $form->decimal('height', __('高（厘米）'));
-//        $form->decimal('weight', __('毛重（公斤）'));
-//        $form->number('ddp', __('DDP'));
-//        $form->text('hq', __('HQ'));
-//        $form->select('unit', __('单位'))->options(getUnit());
-//        $form->image('image', __('图片'));
-//        $form->text('description', __('描述'));
-//        $form->UEditor('content', __('详情'));
+        $form->text('sku', __('SKU'))
+            ->creationRules(['required', "unique:products"])
+            ->updateRules(['required', "unique:products,sku,{{id}}"]);
+        $form->decimal('length', __('长（厘米）'))->required();
+        $form->decimal('width', __('宽（厘米）'))->required();
+        $form->decimal('height', __('高（厘米）'))->required();
+        $form->decimal('weight', __('毛重（公斤）'))->required();
+        $form->number('ddp', __('DDP'))->default(0);
+        $form->text('hq', __('HQ'));
+        $form->select('unit', __('单位'))->options(getUnit());
+        $form->image('image', __('图片'));
+        $form->text('description', __('描述'));
+        $form->UEditor('content', __('详情'));
 
         return $form;
     }

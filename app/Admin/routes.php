@@ -66,6 +66,9 @@ Route::group([
     $router->get('/api/port-select1', 'PortController@getPortSelect1');
     $router->get('/api/port-select2', 'PortController@getPortSelect2');
 
+
+    $router->resource('product-twos', ProductTwoController::class);
+
     //仓储公司
     $router->resource('warehouse-companies', WarehouseCompanyController::class);
     $router->get('api/warehouse-company', 'WarehouseCompanyController@warehouseCompany');
