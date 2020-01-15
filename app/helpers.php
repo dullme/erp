@@ -43,6 +43,16 @@ function getStatusText($status){
 
 
 function getUnit(){
+    $units = config('unit');
+    $units = explode(';', $units);
+
+    $data = [];
+    foreach ($units as $unit){
+        $data[$unit] = $unit;
+    }
+
+    return $data;
+
     return [
         '箱' => '箱',
         '套' => '套',

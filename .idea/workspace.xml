@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9dd538f9-68bf-44f8-9acc-19f55716d661" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/js/components/Compose.vue" beforeDir="false" afterPath="$PROJECT_DIR$/resources/js/components/Compose.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/helpers.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/helpers.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,7 +221,7 @@
       <workItem from="1578554466372" duration="319000" />
       <workItem from="1578554792783" duration="134000" />
       <workItem from="1578624875963" duration="51409000" />
-      <workItem from="1579051875943" duration="2833000" />
+      <workItem from="1579051875943" duration="3523000" />
     </task>
     <servers />
   </component>
@@ -280,12 +280,12 @@
     </state>
     <state x="0" y="0" key="SettingsEditor/0.0.1280.800@0.0.1280.800" timestamp="1576171557486" />
     <state x="0" y="0" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1576676721602" />
-    <state width="750" height="623" key="SwitcherDM" timestamp="1578995358601">
+    <state width="750" height="623" key="SwitcherDM" timestamp="1579057851051">
       <screen x="0" y="0" width="1792" height="1120" />
     </state>
     <state width="750" height="600" key="SwitcherDM/0.0.1024.768@0.0.1024.768" timestamp="1578883616716" />
     <state width="750" height="600" key="SwitcherDM/0.0.1280.800@0.0.1280.800" timestamp="1577280216539" />
-    <state width="750" height="623" key="SwitcherDM/0.0.1792.1120@0.0.1792.1120" timestamp="1578995358601" />
+    <state width="750" height="623" key="SwitcherDM/0.0.1792.1120@0.0.1792.1120" timestamp="1579057851051" />
     <state width="801" height="600" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1578408125520" />
     <state x="574" y="449" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1578750276175">
       <screen x="0" y="0" width="1792" height="1120" />
