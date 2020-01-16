@@ -545,7 +545,7 @@
                     }
                 }
 
-                let url = '/admin/packages/'
+                let url = '/admin/packages'
 
                 axios({
                     method: 'post',

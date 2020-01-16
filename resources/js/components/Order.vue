@@ -371,7 +371,7 @@
                     }
                 }
 
-                let url = '/admin/orders/'
+                let url = '/admin/orders'
 
                 axios({
                     method: 'post',
