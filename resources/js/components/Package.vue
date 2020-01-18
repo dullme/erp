@@ -167,7 +167,7 @@
                         </div>
 
                         <div class="form-group " :class="{'has-error': this.errors.has('buyer_id')}">
-                            <label class="col-sm-2 asterisk control-label">采购商</label>
+                            <label class="col-sm-2 asterisk control-label">出口商</label>
                             <div class="col-sm-8">
                                 <label class="control-label" v-if="errors.has('buyer_id')">
                                     <i class="fa fa-times-circle-o"></i> {{ errors.get('buyer_id') }}
@@ -180,7 +180,7 @@
                         </div>
 
                         <div class="form-group " :class="{'has-error': this.errors.has('customer_id')}">
-                            <label class="col-sm-2 asterisk control-label">客户</label>
+                            <label class="col-sm-2 asterisk control-label">进口商</label>
                             <div class="col-sm-8">
                                 <label class="control-label" v-if="errors.has('customer_id')">
                                     <i class="fa fa-times-circle-o"></i> {{ errors.get('customer_id') }}
@@ -192,8 +192,21 @@
                             </div>
                         </div>
 
+                        <div class="form-group " :class="{'has-error': this.errors.has('warehouse_company_id')}">
+                            <label class="col-sm-2 asterisk control-label">仓储公司</label>
+                            <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('warehouse_company_id')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('warehouse_company_id') }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                                    <select class="form-control" id="warehouse-company-select2" v-model="form_data.warehouse_company_id"> </select>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group ">
-                            <label class="col-sm-2 asterisk control-label">备注</label>
+                            <label class="col-sm-2 control-label">备注</label>
                             <div class="col-sm-8">
                                 <textarea class="form-control remark" v-model="form_data.remark" rows="5" placeholder="输入 备注"></textarea>
                             </div>
@@ -293,6 +306,7 @@
                     container_number: '',
                     seal_number: '',
                     forwarding_company_id: '',
+                    warehouse_company_id: '',
                     buyer_id: '',
                     customer_id: '',
                     packaged_at:Date.today().toString('yyyy-MM-dd'),
@@ -363,6 +377,7 @@
             this.supplierSelect2()
             this.buyerSelect2()
             this.customerSelect2()
+            this.warehouseCompanySelect2()
             this.pictures() //上传图片
         },
 
@@ -392,7 +407,7 @@
             },
 
             buyerSelect2(){
-                Common.select([], "#buyer-select2", "/admin/api/buyer", "name", "mobile", true, '请选择采购商');
+                Common.select([], "#buyer-select2", "/admin/api/buyer", "name", "mobile", true, '请选择出口商');
                 $("#buyer-select2").on("change", () => {
                     this.form_data.buyer_id = parseInt($("#buyer-select2").val());
                     this.errors.clear('buyer_id')
@@ -400,10 +415,18 @@
             },
 
             customerSelect2(){
-                Common.select([], "#customer-select2", "/admin/api/customer", "name", "mobile", true, '请选择客户');
+                Common.select([], "#customer-select2", "/admin/api/customer", "name", "mobile", true, '请选择进口商');
                 $("#customer-select2").on("change", () => {
                     this.form_data.customer_id = parseInt($("#customer-select2").val());
                     this.errors.clear('customer_id')
+                });
+            },
+
+            warehouseCompanySelect2(){
+                Common.select([], "#warehouse-company-select2", "/admin/api/warehouse-company2", "name", "mobile", true, '请选择仓储公司');
+                $("#warehouse-company-select2").on("change", () => {
+                    this.form_data.warehouse_company_id = parseInt($("#warehouse-company-select2").val());
+                    this.errors.clear('warehouse_company_id')
                 });
             },
 
@@ -415,7 +438,7 @@
                             let image = repo['image'] ? "/uploads/"+repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg'
                             let html =
                                 "<div style='display: flex'>" +
-                                "<div><img width='80px' height='80px' src='"+image+"'></div>" +
+                                "<div><img width='50px' height='50px' src='"+image+"'></div>" +
                                 "<div style='margin-left: 20px'>" +
                                 "<div>库存：" + repo['warehouses_count'] + "</div>" +
                                 "<div>SKU：" + repo['sku'] + "</div>" +

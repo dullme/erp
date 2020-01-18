@@ -2,13 +2,17 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\WarehouseCompanyImport;
+use App\Imports\WarehouseCompaniesImport;
+use Excel;
 use App\WarehouseCompany;
-use Encore\Admin\Controllers\AdminController;
+use Carbon\Carbon;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 
-class WarehouseCompanyController extends AdminController
+class WarehouseCompanyController extends ResponseController
 {
     /**
      * Title for current resource.
@@ -26,6 +30,9 @@ class WarehouseCompanyController extends AdminController
     {
         $grid = new Grid(new WarehouseCompany);
         $grid->model()->orderByDesc('id');
+        $grid->tools(function ($tools){
+            $tools->append(new WarehouseCompanyImport());
+        });
         $grid->disableExport();
         $grid->disableRowSelector();
         $grid->filter(function ($filter) {
@@ -34,7 +41,9 @@ class WarehouseCompanyController extends AdminController
             $filter->like('mobile', '电话');
         });
 
-        $grid->column('name', __('名称'));
+        $grid->column('name', __('名称'))->display(function ($name){
+            return "<a href='".url('/admin/warehouses-compose?company_id='.$this->id)."'>{$name}</a>";
+        });
         $grid->column('english_name', __('英文名称'));
         $grid->column('contact_person', __('联系人'));
         $grid->column('position', __('职位'));
@@ -114,10 +123,70 @@ class WarehouseCompanyController extends AdminController
         return $form;
     }
 
+    public function warehouseCompany2()
+    {
+        $q = request()->input('q');
+        $products = WarehouseCompany::where('name', 'like', '%'.$q.'%')->get();
+
+        return response()->json($products);
+    }
+
     public function warehouseCompany()
     {
         $warehouseCompany = WarehouseCompany::select('id','name as text')->get();
 
         return response()->json($warehouseCompany);
+    }
+
+    public function import(Request $request)
+    {
+        $now = Carbon::now()->toDateString();
+        $importData = Excel::toCollection(new WarehouseCompaniesImport, $request->file('file'))[0]; //Excel 导入的数据
+        $importData = $importData->forget(0)->map(function ($item) use ($now) {
+            return [
+                'name'           => (string) $item[0],
+                'english_name'   => (string) isset($item[1]) ? $item[1] : null,
+                'contact_person' => (string) isset($item[2]) ? $item[2] : null,
+                'position'       => (string) isset($item[3]) ? $item[3] : null,
+                'mobile'         => (string) isset($item[4]) ? $item[4] : null,
+                'tel'            => (string) isset($item[5]) ? $item[5] : null,
+                'fax'            => (string) isset($item[6]) ? $item[6] : null,
+                'email'          => (string) isset($item[7]) ? $item[7] : null,
+                'website'        => (string) isset($item[8]) ? $item[8] : null,
+                'address'        => (string) isset($item[9]) ? $item[9] : null,
+                'supply'         => (string) isset($item[10]) ? $item[10] : null,
+                'tax_id'         => (string) isset($item[11]) ? $item[11] : null,
+                'bank'           => (string) isset($item[12]) ? $item[12] : null,
+                'bank_account'   => (string) isset($item[13]) ? $item[13] : null,
+                'register'       => (string) isset($item[14]) ? $item[14] : null,
+                'remark'         => (string) isset($item[15]) ? $item[15] : null,
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ];
+        })->where('name', '!=', '');
+
+        if($importData->count() == 0){
+            return $this->responseError('Excel 中没有数据');
+        }
+
+        $warehouseCompanies = WarehouseCompany::whereIn('name', $importData->pluck('name')->toArray())->get();
+
+        if ($warehouseCompanies->count()) {
+            return $this->responseError(implode(',', $warehouseCompanies->pluck('name')->toArray()).'数据库中已存在');
+        }
+
+        $res = $importData->groupBy('name')->map(function ($item){
+            return [
+                'count' => $item->count()
+            ];
+        })->where('count', '>', 1);
+
+        if($res->keys()->count() > 0){
+            return $this->responseError(implode(',', $res->keys()->toArray()).'有重复项');
+        }
+
+        WarehouseCompany::insert($importData->values()->toArray());
+
+        return $this->responseSuccess(true);
     }
 }

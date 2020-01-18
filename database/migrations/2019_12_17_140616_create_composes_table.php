@@ -20,6 +20,8 @@ class CreateComposesTable extends Migration
             $table->string('hq')->nullable()->nullable();
             $table->string('image')->nullable()->comment('图片');
             $table->longText('content')->nullable()->comment('详情');
+            $table->integer('count')->default(1)->comment('所需数量');
+            $table->integer('order')->default(0)->comment('排序');
             $table->timestamps();
         });
     }

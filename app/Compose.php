@@ -8,6 +8,8 @@ class Compose extends Model
 {
     protected $fillable = [
         'name',
+        'count',
+        'order',
         'asin',
         'image',
         'hq',

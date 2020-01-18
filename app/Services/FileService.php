@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use File;
+use Image;
 
 class FileService
 {
@@ -33,8 +34,13 @@ class FileService
                 ];
             }
 
-            $filename = time() . rand(100000, 999999) . $type;
+            $filename = md5(uniqid()).'.'.$file->guessExtension();
             $file->move($destinationPath, $filename);
+
+            $img = Image::make($destinationPath.$filename)->widen(300, function ($constraint) {
+                $constraint->upsize();
+            });
+            $img->save('uploads/thumb/images/'.$filename);
 
             return [
                 'status' => 'SUCCESS',

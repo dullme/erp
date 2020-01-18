@@ -42,7 +42,7 @@ class OrderController extends ResponseController
             $filter->disableIdFilter();
             $filter->equal('no', '订单编号');
             $suppliers = Supplier::pluck('name', 'id');
-            $filter->equal('supplier_id', '供应商')->select($suppliers);
+            $filter->equal('supplier_id', '生产商')->select($suppliers);
             $filter->equal('status', '状态')->select([0=>'进行中', 1=>'已完成']);
         });
 
@@ -52,7 +52,7 @@ class OrderController extends ResponseController
 
             return "<a href='{$url}'>{$this->no}</a>";
         });
-        $grid->supplier()->name('供应商');
+        $grid->supplier()->name('生产商');
         $grid->column('signing_at', __('签订日'));
         $grid->column('product', __('SKU:数量'))->display(function () {
             $products = Product::find($this->orderProduct->pluck('product_id'));
@@ -96,7 +96,7 @@ class OrderController extends ResponseController
     {
         $this->loadVue();
 
-        $order = Order::with('supplier', 'orderProduct.product:id,sku,image', 'orderBatch')->findOrFail($id);
+        $order = Order::with('supplier', 'customer', 'orderProduct.product:id,sku,image', 'orderBatch')->findOrFail($id);
 
         if($order->orderBatch->count()){
             $product_batch_ids = $order->orderBatch->pluck('product_batch')->flatten(1)->pluck('product_id')->unique()->values()->toArray();
@@ -145,11 +145,13 @@ class OrderController extends ResponseController
         request()->validate([
             'no'          => 'required|unique:orders,no',
             'supplier_id' => 'required',
+            'customer_id' => 'required',
             'signing_at'  => 'required|date:Y-m-d',
         ], [
             'no.required'          => '请输入订单编号',
             'no.unique'            => '该订单编号已存在',
-            'supplier_id.required' => '请选择供应商',
+            'supplier_id.required' => '请选择生产商',
+            'customer_id.required' => '请选择进口商',
             'signing_at.required'  => '请选择签订日',
             'signing_at.date'      => '签订日格式错误',
         ]);
@@ -182,6 +184,7 @@ class OrderController extends ResponseController
             $order = Order::create([
                 'no'          => request()->input('no'),
                 'supplier_id' => request()->input('supplier_id'),
+                'customer_id' => request()->input('customer_id'),
                 'signing_at'  => request()->input('signing_at'),
                 'remark'      => request()->input('remark'),
             ]);

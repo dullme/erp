@@ -31,7 +31,7 @@
                         </div>
 
                         <div class="form-group " :class="{'has-error': this.errors.has('supplier_id')}">
-                            <label class="col-sm-2  control-label">供应商</label>
+                            <label class="col-sm-2  control-label">生产商</label>
                             <div class="col-sm-8">
                                 <label class="control-label" v-if="errors.has('supplier_id')">
                                     <i class="fa fa-times-circle-o"></i> {{ errors.get('supplier_id') }}
@@ -39,6 +39,19 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
                                     <select class="form-control" id="supplier" v-model="form_data.supplier_id"> </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group " :class="{'has-error': this.errors.has('customer_id')}">
+                            <label class="col-sm-2  control-label">进口商</label>
+                            <div class="col-sm-8">
+                                <label class="control-label" v-if="errors.has('customer_id')">
+                                    <i class="fa fa-times-circle-o"></i> {{ errors.get('customer_id') }}
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                                    <select class="form-control" id="customer" v-model="form_data.customer_id"> </select>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +94,7 @@
                                         <th style="width: 100px">数量</th>
                                         <th style="width: 100px">单价</th>
                                         <th style="width: 100px">验货时间</th>
-                                        <th style="width: 200px"></th>
+                                        <th style="width: 100px">备注</th>
                                         <th style="width: 50px">操作</th>
                                     </tr>
                                     <tr :id="'product_info'+product_info.id" v-for="(product_info) in form_data.product_info" :key="product_info.length">
@@ -170,6 +183,7 @@
                 form_data: {
                     no: '',
                     supplier_id: '',
+                    customer_id: '',
                     signing_at:Date.today().toString('yyyy-MM-dd'),
                     images: [],  //图片
                     product_info:[], //单品
@@ -179,6 +193,7 @@
                 edit_data: {
                     product:[],
                     supplier_id:'',
+                    customer_id:'',
                     initialPreview: [],
                     initialPreviewConfig: [],
                 }
@@ -229,9 +244,14 @@
             },
 
             supplierSelect2(){
-                Common.select(this.edit_data.supplier_id, "#supplier", "/admin/api/supplier", "name", "mobile", true, '请选择供应商');
+                Common.select(this.edit_data.supplier_id, "#supplier", "/admin/api/supplier", "name", "mobile", true, '请选择生产商');
                 $("#supplier").on("change", () => {
                     this.form_data.supplier_id = parseInt($("#supplier").val());
+                });
+
+                Common.select(this.edit_data.customer_id, "#customer", "/admin/api/customer", "name", "mobile", true, '请选择进口商');
+                $("#customer").on("change", () => {
+                    this.form_data.customer_id = parseInt($("#customer").val());
                 });
             },
 
@@ -243,7 +263,7 @@
                             let image = repo['image'] ? "/uploads/"+repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg'
                             let html =
                                 "<div style='display: flex'>" +
-                                "<div><img width='80px' height='80px' src='"+image+"'></div>" +
+                                "<div><img width='50px' height='50px' src='"+image+"'></div>" +
                                 "<div style='margin-left: 20px'>" +
                                 "<div>SKU：" + repo['text'] + "</div>" +
                                 "<div>DDP：" + repo['ddp'] + "</div>" +

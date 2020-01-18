@@ -10,6 +10,7 @@ class Package extends Model
     protected $fillable = [
         'status',
         'forwarding_company_id',
+        'warehouse_company_id',
         'buyer_id',
         'customer_id',
         'lading_number',
@@ -50,5 +51,10 @@ class Package extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function warehouseCompany()
+    {
+        return $this->belongsTo(WarehouseCompany::class);
     }
 }

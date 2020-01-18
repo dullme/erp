@@ -18,7 +18,7 @@ class WarehouseController extends ResponseController
      *
      * @var string
      */
-    protected $title = '库存管理';
+    protected $title = '单品库存';
 
     /**
      * Make a grid builder.
@@ -30,7 +30,9 @@ class WarehouseController extends ResponseController
         $grid = new Grid(new Product);
 
         $grid->column('id', __('ID'));
-        $grid->column('image', __('图片'))->image();
+        $grid->column('image', __('图片'))->display(function ($image) {
+            return $image? 'thumb/' . $image : asset('images/default.png');
+        })->image('', 50, 50);
         $grid->column('description', __('描述'));
         $grid->column('sku', __('SKU'));
 //        $grid->column('volume', '体积')->display(function (){

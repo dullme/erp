@@ -17,8 +17,9 @@ class CreatePackagesTable extends Migration
             $table->bigIncrements('id');
             $table->integer('status')->default(0)->comment('状态0:待审核；1待入库；2已入库');
             $table->integer('forwarding_company_id')->unsigned()->comment('货代');
-            $table->integer('buyer_id')->unsigned()->comment('采购商');
-            $table->integer('customer_id')->unsigned()->comment('客户');
+            $table->integer('buyer_id')->unsigned()->comment('出口商');
+            $table->integer('customer_id')->unsigned()->comment('进口商');
+            $table->integer('warehouse_company_id')->unsigned()->comment('仓储公司');
             $table->string('lading_number')->comment('提单号');
             $table->string('agreement_no')->comment('合同号');
             $table->string('container_number')->nullable()->comment('集装箱号');

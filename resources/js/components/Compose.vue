@@ -196,7 +196,7 @@
                             let image = repo['image'] ? "/uploads/"+repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg'
                             let html =
                                 "<div style='display: flex'>" +
-                                "<div><img width='80px' height='80px' src='"+image+"'></div>" +
+                                "<div><img width='50px' height='50px' src='"+image+"'></div>" +
                                 "<div style='margin-left: 20px'>" +
                                 "<div>SKU：" + repo['text'] + "</div>" +
                                 "<div>DDP：" + repo['ddp'] + "</div>" +

@@ -16,7 +16,8 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('status')->default(0)->comment('状态 0:可入库；1：订单已完成');
-            $table->integer('supplier_id')->unsigned()->comment('供应商');
+            $table->integer('supplier_id')->unsigned()->comment('生产商');
+            $table->integer('customer_id')->unsigned()->comment('进口商');
             $table->integer('batch')->default(0)->comment('当前批次');
             $table->string('no')->unique()->comment('订单编号');
             $table->string('signing_at')->nullable()->comment('签订日');

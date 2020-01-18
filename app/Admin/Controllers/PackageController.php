@@ -81,20 +81,21 @@ class PackageController extends ResponseController
 
             return implode("|", $product);
         });
-        $grid->column('status', '状态')->display(function ($status){
-            if ($status == 1){
+        $grid->column('status', '状态')->display(function ($status) {
+            if ($status == 1) {
                 return "<a style='cursor: pointer' data-toggle='modal' data-target='#add_contact' title='' onclick=\"addContact({$this->id})\"><i class='fa fa-balance-scale'></i></a>";
-            }elseif ($status == 2){
+            } else if ($status == 2) {
                 return '<span class="label label-success">已入库</span>';
-            }else{
+            } else {
                 return '<span class="label label-danger">待审核</span>';
             }
         });
 
-        $grid->column('report', '是否报告')->display(function ($status){
-            if ($status){
+        $grid->column('report', '是否报告')->display(function ($status) {
+            if ($status) {
                 return '<span class="label label-success">是</span>';
             }
+
             return '<span class="label label-danger">否</span>';
         });
 
@@ -106,7 +107,7 @@ class PackageController extends ResponseController
         $grid->disableExport();
 
         $grid->actions(function ($actions) {
-            if(in_array($this->row->status,[1,2])){
+            if (in_array($this->row->status, [1, 2])) {
                 $actions->disableEdit();
                 $actions->disableDelete();
             }
@@ -132,6 +133,7 @@ class PackageController extends ResponseController
             'forwardingCompany',
             'buyer',
             'customer',
+            'warehouseCompany',
         ])->find($id);
 
         $res = $package->warehouse->groupBy('product_id')->map(function ($item) {
@@ -148,9 +150,9 @@ class PackageController extends ResponseController
         $package->offsetUnset('warehouse');
         $package->setAttribute('warehouse', $res);
 
-        $products = Product::whereIn('id', collect($package->product)->pluck('product_id')->toArray())->select('id', 'sku','image')->get();
+        $products = Product::whereIn('id', collect($package->product)->pluck('product_id')->toArray())->select('id', 'sku', 'image')->get();
 
-        $package->product = collect($package->product)->map(function ($item) use($products){
+        $package->product = collect($package->product)->map(function ($item) use ($products) {
             $product = $products->where('id', $item['product_id'])->first()->toArray();
             $product['quantity'] = $item['quantity'];
             $product['packaged_at'] = $item['packaged_at'];
@@ -181,8 +183,9 @@ class PackageController extends ResponseController
         $form->select('arrival_port', __('到货港'))->options('/admin/api/port-select2')->required();
         $form->date('arrival_at', __('预计到港时间'))->default(date('Y-m-d'))->required();
         $form->date('entry_at', __('预计入仓时间'))->default(date('Y-m-d'))->required();
-        $form->select('buyer_id', __('采购商'))->options('/admin/api/buyer-select')->required();
-        $form->select('customer_id', __('客户'))->options('/admin/api/customer-select')->required();
+        $form->select('buyer_id', __('出口商'))->options('/admin/api/buyer-select')->required();
+        $form->select('customer_id', __('进口商'))->options('/admin/api/customer-select')->required();
+        $form->select('warehouse_company_id', __('仓储公司'))->options('/admin/api/warehouse-company')->required();
         $form->textarea('remark', __('备注'));
         $form->switch('report', __('是否报告'))->states([
             'on'  => ['value' => 1, 'text' => '是'],
@@ -211,30 +214,32 @@ class PackageController extends ResponseController
             'ship_port'             => 'required',
             'arrival_port'          => 'required',
             'forwarding_company_id' => 'required',
+            'warehouse_company_id'  => 'required',
             'buyer_id'              => 'required',
             'customer_id'           => 'required',
             'packaged_at'           => 'required|date:Y-m-d',
-            'departure_at'           => 'required|date:Y-m-d',
-            'arrival_at'           => 'required|date:Y-m-d',
-            'entry_at'           => 'required|date:Y-m-d',
+            'departure_at'          => 'required|date:Y-m-d',
+            'arrival_at'            => 'required|date:Y-m-d',
+            'entry_at'              => 'required|date:Y-m-d',
             'remark'                => 'nullable',
         ], [
             'agreement_no.required'          => '请输入合同号',
             'lading_number.required'         => '请输入提单号',
             'lading_number.unique'           => '该提单号已存在',
             'forwarding_company_id.required' => '请选择供货代公司',
-            'buyer_id.required'              => '请选择采购商',
-            'customer_id.required'           => '请选择客户',
+            'buyer_id.required'              => '请选择出口商',
+            'customer_id.required'           => '请选择进口商',
+            'warehouse_company_id.required'  => '请选择仓储公司',
             'ship_port.required'             => '请选择发货港',
             'arrival_port.required'          => '请选择到货港',
             'packaged_at.required'           => '请选择发货日',
             'packaged_at.date'               => '发货日格式错误',
-            'departure_at.required'           => '请选择离港时间',
-            'departure_at.date'               => '离港时间格式错误',
-            'arrival_at.required'           => '请选择到港时间',
-            'arrival_at.date'               => '到港时间格式错误',
-            'entry_at.required'           => '请选择入仓时间',
-            'entry_at.date'               => '入仓时间格式错误',
+            'departure_at.required'          => '请选择离港时间',
+            'departure_at.date'              => '离港时间格式错误',
+            'arrival_at.required'            => '请选择到港时间',
+            'arrival_at.date'                => '到港时间格式错误',
+            'entry_at.required'              => '请选择入仓时间',
+            'entry_at.date'                  => '入仓时间格式错误',
         ]);
 
 //        $file = request()->file('images');
@@ -339,7 +344,8 @@ class PackageController extends ResponseController
             'warehouse' => function ($query) {
                 $query->where('status', 2)->with('product');
             },
-            'forwardingCompany:id,name'
+            'forwardingCompany:id,name',
+            'warehouseCompany:id,name'
         ])->find($id);
 
         $res = $package->warehouse->groupBy('product_id')->map(function ($item) {
@@ -366,7 +372,7 @@ class PackageController extends ResponseController
 
             $package = Package::findOrFail($data['id']);
 
-            if($package->status != 1){
+            if ($package->status != 1) {
                 throw new \Exception('状态错误');
             }
 
@@ -382,13 +388,13 @@ class PackageController extends ResponseController
                 'warehouse_company_id' => $data['company']
             ]);
 
-            if($warehouse == 0){
+            if ($warehouse == 0) {
                 throw new \Exception('入库失败！');
             }
             DB::commit();   //保存
 
             return $this->responseSuccess($warehouse);
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack(); //回滚
 
             return $this->setStatusCode(422)->responseError($exception->getMessage());
@@ -423,30 +429,33 @@ class PackageController extends ResponseController
                         if ($oneWarehouse['quantity'] < $now_quantity) {
                             //如果某批次不足当前装柜所需则全部改为海上仓
                             Warehouse::where('id', $oneWarehouse['id'])->update([
-                                "status"     => 2,
-                                "package_id" => $package->id,
+                                "status"               => 2,
+                                "package_id"           => $package->id,
+                                'warehouse_company_id' => $package->warehouse_company_id
                             ]);
                             $now_quantity -= $oneWarehouse['quantity']; //减少总需要的货物
                         } else {
                             if ($oneWarehouse['quantity'] == $now_quantity) {
                                 //如果当前和所需货物刚好一致则更新
                                 Warehouse::where('id', $oneWarehouse['id'])->update([
-                                    "status"     => 2,
-                                    "package_id" => $package->id,
+                                    "status"               => 2,
+                                    "package_id"           => $package->id,
+                                    'warehouse_company_id' => $package->warehouse_company_id
                                 ]);
                             } else { //大于本次装柜所需
                                 Warehouse::where('id', $oneWarehouse['id'])->update([
                                     'quantity' => $oneWarehouse['quantity'] - $now_quantity
                                 ]);//减少原来的数量
                                 Warehouse::create([
-                                    "order_id"     => $oneWarehouse['order_id'],
-                                    "package_id"   => $package->id,
-                                    "order_batch"  => $oneWarehouse['order_batch'],
-                                    "batch_number" => $oneWarehouse['batch_number'],
-                                    "product_id"   => $oneWarehouse['product_id'],
-                                    "status"       => 2,
-                                    "quantity"     => $now_quantity,
-                                    "entry_at"     => $oneWarehouse['entry_at'],
+                                    "order_id"             => $oneWarehouse['order_id'],
+                                    "package_id"           => $package->id,
+                                    'warehouse_company_id' => $package->warehouse_company_id,
+                                    "order_batch"          => $oneWarehouse['order_batch'],
+                                    "batch_number"         => $oneWarehouse['batch_number'],
+                                    "product_id"           => $oneWarehouse['product_id'],
+                                    "status"               => 2,
+                                    "quantity"             => $now_quantity,
+                                    "entry_at"             => $oneWarehouse['entry_at'],
                                 ]); //新增海上仓的数量
                             }
                             break; //结束循环
@@ -454,8 +463,9 @@ class PackageController extends ResponseController
                     }
                 } else if ($item['quantity'] == $quantity) { //全部一致
                     Warehouse::whereIn('id', $warehouse[$item['product_id']]->pluck('id'))->update([
-                        "status"     => 2,
-                        "package_id" => $package->id,
+                        "status"               => 2,
+                        "package_id"           => $package->id,
+                        'warehouse_company_id' => $package->warehouse_company_id
                     ]);
                 } else {
                     throw new \Exception('库存不足');
@@ -465,7 +475,7 @@ class PackageController extends ResponseController
             DB::commit();   //保存
 
             return $this->responseSuccess(true);
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack(); //回滚
 
             return $this->setStatusCode(422)->responseError($exception->getMessage());

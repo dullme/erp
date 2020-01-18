@@ -178,6 +178,11 @@ class ProductController extends AdminController
             ->orWhere('description', 'like', '%' . $q . '%')
             ->select('id', 'sku as text', 'description', 'ddp', 'image')->get();
 
+        $products->map(function ($item){
+            $item['image'] = $item['image'] ? 'thumb/'.$item['image'] : '../images/default.png';
+            return $item;
+        });
+
         if($order_id){
             $order = Order::with('orderProduct', 'warehouses')->find($order_id);
             $products->map(function ($item)use($order){

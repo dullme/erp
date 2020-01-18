@@ -8,6 +8,7 @@ class Order extends Model
 {
     protected $fillable = [
         'supplier_id',
+        'customer_id',
         'no',
         'status',
         'batch',
@@ -34,6 +35,11 @@ class Order extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function orderBatch()

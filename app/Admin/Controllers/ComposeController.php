@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Product;
 use DB;
+use Image;
 use Illuminate\Support\Facades\Storage;
 use Session;
 use App\Compose;
@@ -44,7 +45,7 @@ class ComposeController extends ResponseController
     protected function grid()
     {
         $grid = new Grid(new Compose);
-        $grid->model()->orderByDesc('id');
+        $grid->model()->orderByDesc('order');
 
         $session_hq = Session::get('hq', config('hq'));
 
@@ -53,8 +54,15 @@ class ComposeController extends ResponseController
             return "<a href='/admin/media?path=/{$this->asin}'>{$this->asin}</a>";
         });
         $grid->column('image', '图片')->display(function ($image) {
-            return $image;
-        })->image('', 100, 100);
+            $data = [];
+            if($image){
+                foreach($image as $item){
+                    $data[] = 'thumb/'.$item;
+                    break;
+                }
+            }
+            return count($data) ? $data : [asset('images/default.png')];
+        })->image('', 50, 50);
         $grid->column('name', __('组合名称'))->display(function ($name) {
             $short = mb_substr($name,0, 20);
 
@@ -82,7 +90,7 @@ class ComposeController extends ResponseController
             });
         });
 
-//        $grid->column('created_at', __('添加时间'));
+        $grid->column('order', __('序号'))->editable();
 
         $grid->disableExport();
 
@@ -132,7 +140,16 @@ class ComposeController extends ResponseController
         $form->text('name', __('组合名称'))->rules('required');
         $form->text('asin', __('ASIN'))->rules('required');
         $form->text('hq', __('HQ'));
-        $form->multipleImage('image', __('图片'))->removable();
+        $form->number('count', __('设置匹配数'));
+        $form->number('order', __('序号'))->rules('integer');
+        $form->multipleImage('image', __('图片'))->name(function ($file) {
+            $img = Image::make($file)->widen(300, function ($constraint) {
+                $constraint->upsize();
+            });
+            $path = md5(uniqid()).'.'.$file->guessExtension();
+            $img->save('uploads/thumb/images/'.$path);
+            return $path;
+        })->removable();
         $form->UEditor('content', __('详情'));
 
         return $form;
@@ -274,5 +291,13 @@ class ComposeController extends ResponseController
         }
 
         return $file;
+    }
+
+    public function composeSelect()
+    {
+        $q = request()->input('q');
+        $products = Compose::where('name', 'like', '%'.$q.'%')->select('id', 'name as text')->get();
+
+        return response()->json($products);
     }
 }

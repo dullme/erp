@@ -42,8 +42,8 @@
             <div class="col-lg-8">
                 <div class="col-lg-6">
                     <p>货代：{{ $package->forwardingCompany->name }}</p>
-                    <p>采购商：{{ $package->buyer->name }}</p>
-                    <p>客户：{{ $package->customer->name }}</p>
+                    <p>出口商：{{ $package->buyer->name }}</p>
+                    <p>进口商：{{ $package->customer->name }}</p>
                     <p>提单号：{{ $package->lading_number }}</p>
                     <p>合同号：{{ $package->agreement_no }}</p>
                     <p>集装箱号：{{ $package->container_number }}</p>
@@ -56,6 +56,7 @@
                     <p>离港时间：{{ substr($package->departure_at, 0, 10) }}</p>
                     <p>到港时间：{{ substr($package->arrival_at, 0, 10) }}</p>
                     <p>预计入仓时间：{{ substr($package->entry_at, 0, 10) }}</p>
+                    <p>仓储公司：{{ $package->warehouseCompany->name }}</p>
                     @if($package->status == 2)
                         <p>实际入仓时间：{{ $package->checkin_at }}</p>
                     @endif

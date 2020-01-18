@@ -86,7 +86,7 @@ VALUES
 	(11,0,13,'文件管理','fa-file','media',NULL,'2019-12-17 14:47:55','2020-01-05 21:10:19'),
 	(12,16,4,'订购入库','fa-bars','orders',NULL,'2019-12-21 17:24:01','2020-01-05 21:02:35'),
 	(13,0,2,'库存状况','fa-leaf','warehouses',NULL,'2019-12-21 20:53:10','2020-01-05 21:02:35'),
-	(14,17,7,'供应商','fa-bars','suppliers',NULL,'2020-01-03 14:56:33','2020-01-05 21:02:35'),
+	(14,17,7,'生产商','fa-bars','suppliers',NULL,'2020-01-03 14:56:33','2020-01-05 21:02:35'),
 	(15,17,8,'货代公司','fa-bars','forwarding-companies',NULL,'2020-01-05 13:16:15','2020-01-05 21:02:35'),
 	(16,0,3,'货物管理','fa-dropbox',NULL,NULL,'2020-01-05 13:20:46','2020-01-05 21:02:35'),
 	(17,0,6,'公司','fa-black-tie',NULL,NULL,'2020-01-05 13:22:33','2020-01-05 21:02:35'),
@@ -452,7 +452,7 @@ DROP TABLE IF EXISTS `orders`;
 
 CREATE TABLE `orders` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `supplier_id` int(10) unsigned NOT NULL COMMENT '供应商',
+  `supplier_id` int(10) unsigned NOT NULL COMMENT '生产商',
   `no` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单编号',
   `batch` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '当前批次',
   `product` text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '产品',
@@ -573,7 +573,7 @@ LOCK TABLES `suppliers` WRITE;
 
 INSERT INTO `suppliers` (`id`, `name`, `mobile`, `address`, `deleted_at`, `created_at`, `updated_at`)
 VALUES
-	(1,'供应商名称','13867676767','地址很长','2020-01-07 15:54:13','2020-01-07 15:51:29','2020-01-07 15:54:13');
+	(1,'生产商名称','13867676767','地址很长','2020-01-07 15:54:13','2020-01-07 15:51:29','2020-01-07 15:54:13');
 
 /*!40000 ALTER TABLE `suppliers` ENABLE KEYS */;
 UNLOCK TABLES;

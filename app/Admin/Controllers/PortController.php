@@ -71,7 +71,7 @@ class PortController extends ResponseController
 
     public function getPort()
     {
-        $port = Port::select('id', 'name')->get();
+        $port = Port::select('id', 'name')->orderBy('type', 'ASC')->get();
         $port2 = Port::select('id', 'name')->orderBy('type', 'DESC')->get();
 
         $ship_port = $port->toArray();
@@ -86,7 +86,7 @@ class PortController extends ResponseController
 
     public function getPortSelect1()
     {
-        $port = Port::select('id', 'name as text')->get();
+        $port = Port::select('id', 'name as text')->orderBy('type', 'ASC')->get();
 
         return $port->map(function ($item){
             return [

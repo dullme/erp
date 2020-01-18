@@ -17,6 +17,7 @@
                         <p>铅封号：<span id="seal_number"></span></p>
                         <p>货代公司：<span id="forwarding_company"></span></p>
                         <p>SKU:数量：<span id="sku-text"></span></p>
+                        <p>预计入库仓储：<span id="warehouse_company"></span></p>
                         <p><select id="warehouse-companies" name="warehouse_companies" class="form-control" ></select></p>
                     </div>
                 </div>
@@ -41,6 +42,8 @@
             $('#container_number').html(response.data.container_number)
             $('#seal_number').html(response.data.seal_number)
             $('#forwarding_company').html(response.data.forwarding_company.name)
+            $('#warehouse_company').html(response.data.warehouse_company.name)
+            $("#warehouse-companies").val(response.data.warehouse_company.id).select2()
             let text = '';
             for(let i=0; i<response.data.warehouse.length; i++){
                 if(i != 0){

@@ -182,7 +182,7 @@
             },
 
             supplierSelect2(){
-                Common.select(this.edit_data.supplier_id, "#supplier", "/admin/api/supplier", "name", "mobile", true, '请选择供应商');
+                Common.select(this.edit_data.supplier_id, "#supplier", "/admin/api/supplier", "name", "mobile", true, '请选择生产商');
                 $("#supplier").on("change", () => {
                     this.form_data.supplier_id = parseInt($("#supplier").val());
                 });

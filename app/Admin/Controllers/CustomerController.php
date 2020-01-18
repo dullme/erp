@@ -2,20 +2,25 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\CustomerImport;
 use App\Customer;
+use Excel;
+use App\Imports\CustomersImport;
+use Carbon\Carbon;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 
-class CustomerController extends AdminController
+class CustomerController extends ResponseController
 {
     /**
      * Title for current resource.
      *
      * @var string
      */
-    protected $title = '客户';
+    protected $title = '进口商';
 
     /**
      * Make a grid builder.
@@ -26,6 +31,10 @@ class CustomerController extends AdminController
     {
         $grid = new Grid(new Customer);
         $grid->model()->orderByDesc('id');
+
+        $grid->tools(function ($tools){
+            $tools->append(new CustomerImport());
+        });
         $grid->disableExport();
         $grid->disableRowSelector();
         $grid->filter(function ($filter) {
@@ -128,5 +137,58 @@ class CustomerController extends AdminController
         $products = Customer::where('name', 'like', '%'.$q.'%')->select('id', 'name as text')->get();
 
         return response()->json($products);
+    }
+
+    public function import(Request $request)
+    {
+        $now = Carbon::now()->toDateString();
+        $importData = Excel::toCollection(new CustomersImport, $request->file('file'))[0]; //Excel 导入的数据
+        $importData = $importData->forget(0)->map(function ($item) use ($now) {
+            return [
+                'name'           => (string) $item[0],
+                'english_name'   => (string) isset($item[1]) ? $item[1] : null,
+                'contact_person' => (string) isset($item[2]) ? $item[2] : null,
+                'position'       => (string) isset($item[3]) ? $item[3] : null,
+                'mobile'         => (string) isset($item[4]) ? $item[4] : null,
+                'tel'            => (string) isset($item[5]) ? $item[5] : null,
+                'fax'            => (string) isset($item[6]) ? $item[6] : null,
+                'email'          => (string) isset($item[7]) ? $item[7] : null,
+                'website'        => (string) isset($item[8]) ? $item[8] : null,
+                'address'        => (string) isset($item[9]) ? $item[9] : null,
+                'supply'         => (string) isset($item[10]) ? $item[10] : null,
+                'tax_id'         => (string) isset($item[11]) ? $item[11] : null,
+                'bank'           => (string) isset($item[12]) ? $item[12] : null,
+                'bank_account'   => (string) isset($item[13]) ? $item[13] : null,
+                'register'       => (string) isset($item[14]) ? $item[14] : null,
+                'remark'         => (string) isset($item[15]) ? $item[15] : null,
+                'created_at'     => $now,
+                'updated_at'     => $now,
+            ];
+        })->where('name', '!=', '');
+
+        if($importData->count() == 0){
+            return $this->responseError('Excel 中没有数据');
+        }
+
+        $customers = Customer::whereIn('name', $importData->pluck('name')->toArray())->get();
+
+        if ($customers->count()) {
+            return $this->responseError(implode(',', $customers->pluck('name')->toArray()).'数据库中已存在');
+//            dd(1,$buyers->pluck('name')); //数据库中已存在
+        }
+
+        $res = $importData->groupBy('name')->map(function ($item){
+            return [
+                'count' => $item->count()
+            ];
+        })->where('count', '>', 1);
+
+        if($res->keys()->count() > 0){
+            return $this->responseError(implode(',', $res->keys()->toArray()).'有重复项');
+        }
+
+        Customer::insert($importData->values()->toArray());
+
+        return $this->responseSuccess(true);
     }
 }
