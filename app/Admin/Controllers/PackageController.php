@@ -15,6 +15,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PackageController extends ResponseController
 {
@@ -58,9 +59,10 @@ class PackageController extends ResponseController
 
         $grid->column('lading_number', __('提单号'))->display(function () {
             $url = url('/admin/packages/' . $this->id);
-
-            return "<a href='{$url}'>{$this->lading_number}</a>";
+            $dir = "/admin/media?path=/packages/".$this->lading_number;
+            return "<a href='{$dir}'><i class='fa fa-file'></i></a> <a href='{$url}'>{$this->lading_number}</a>";
         });
+
         $grid->column('container_number', __('集装箱号'))->display(function () {
             $url = url('/admin/packages/' . $this->id);
 
@@ -275,6 +277,7 @@ class PackageController extends ResponseController
             });
 
             $request['product'] = $productInfo->values();
+            Storage::makeDirectory('public/packages/' . request()->input('lading_number'));
             $package = Package::create($request);
 
             $warehouse = Warehouse::where('status', 1)->whereIn('product_id', $productInfo->pluck('product_id'))->get();

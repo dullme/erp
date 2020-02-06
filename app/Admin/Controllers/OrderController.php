@@ -14,6 +14,7 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends ResponseController
 {
@@ -49,8 +50,9 @@ class OrderController extends ResponseController
 //        $grid->column('id', __('ID'));
         $grid->column('no', __('订单编号'))->display(function () {
             $url = url('/admin/orders/' . $this->id);
+            $dir = "/admin/media?path=/orders/".$this->no;
 
-            return "<a href='{$url}'>{$this->no}</a>";
+            return "<a href='{$dir}'><i class='fa fa-file'></i></a> <a href='{$url}'>{$this->no}</a>";
         });
         $grid->supplier()->name('生产商');
         $grid->column('signing_at', __('签订日'));
@@ -181,6 +183,7 @@ class OrderController extends ResponseController
         DB::beginTransaction(); //开启事务
         $now = Carbon::now()->toDateTimeString();
         try {
+            Storage::makeDirectory('public/orders/' . request()->input('no'));
             $order = Order::create([
                 'no'          => request()->input('no'),
                 'supplier_id' => request()->input('supplier_id'),

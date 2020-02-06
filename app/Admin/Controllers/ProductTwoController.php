@@ -13,6 +13,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Session;
 use Image;
 
@@ -56,7 +57,9 @@ class ProductTwoController extends ResponseController
         $session_weight = Session::get('weight', 'kg');
 
 //        $grid->column('id', __('ID'));
-        $grid->column('sku', __('SKU'));
+        $grid->column('sku', __('SKU'))->display(function () {
+            return "<a href='/admin/media?path=/products/{$this->sku}'>{$this->sku}</a>";
+        });
         $grid->column('image', __('图片'))->display(function ($image) {
             return $image? 'thumb/' . $image : asset('images/default.png');
         })->image('', 50, 50);
@@ -190,6 +193,13 @@ class ProductTwoController extends ResponseController
         $form->UEditor('content', __('详情'));
 
         return $form;
+    }
+
+    public function store()
+    {
+        Storage::makeDirectory('public/products/' . request()->input('sku'));
+
+        return $this->form()->store();
     }
 
     public function product()

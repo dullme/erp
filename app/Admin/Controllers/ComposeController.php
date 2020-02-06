@@ -51,7 +51,7 @@ class ComposeController extends ResponseController
 
 //        $grid->column('id', __('ID'));
         $grid->column('asin', __('ASKU'))->display(function () {
-            return "<a href='/admin/media?path=/{$this->asin}'>{$this->asin}</a>";
+            return "<a href='/admin/media?path=/composes/{$this->asin}'>{$this->asin}</a>";
         });
         $grid->column('image', '图片')->display(function ($image) {
             $data = [];
@@ -198,7 +198,7 @@ class ComposeController extends ResponseController
         $now = Carbon::now();
         DB::beginTransaction(); //开启事务
         try {
-            Storage::makeDirectory('public/' . request()->input('asin'));
+            Storage::makeDirectory('public/composes/' . request()->input('asin'));
             $composeId = Compose::insertGetId([
                 'name'       => request()->input('name'),
                 'asin'       => request()->input('asin'),

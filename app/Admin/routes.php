@@ -82,4 +82,8 @@ Route::group([
     $router->get('api/warehouse-company', 'WarehouseCompanyController@warehouseCompany');
     $router->get('api/warehouse-company2', 'WarehouseCompanyController@warehouseCompany2');
     $router->post('/api/warehouse-company-import', 'WarehouseCompanyController@import');
+
+    //销售利润表
+    $router->resource('sales-profits', SalesProfitController::class);
+    $router->post('/api/sales-profit-import', 'SalesProfitController@import');
 });
