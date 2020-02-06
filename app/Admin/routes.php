@@ -42,6 +42,7 @@ Route::group([
     $router->get('api/getPackage-info/{id}', 'PackageController@getPackageInfo');
     $router->post('api/package-in', 'PackageController@packageIn');
     $router->post('/api/package/review/{id}', 'PackageController@packageReview');
+    $router->get('/api/package/download/{id}', 'PackageController@downloadPackage');
 
     //供货商
     $router->resource('suppliers', SupplierController::class);

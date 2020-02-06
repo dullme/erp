@@ -2,12 +2,14 @@
 
 namespace App\Admin\Controllers;
 
+use App\Exports\PackagesExport;
 use App\ForwardingCompany;
 use App\Package;
 use App\Product;
 use App\Warehouse;
 use Carbon\Carbon;
 use DB;
+use Excel;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
@@ -480,5 +482,62 @@ class PackageController extends ResponseController
 
             return $this->setStatusCode(422)->responseError($exception->getMessage());
         }
+    }
+
+    public function downloadPackage($id)
+    {
+        $package = Package::with([
+            'warehouse' => function ($query) {
+                $query->whereIn('status', [2, 3, 4])->with('product', 'warehouseCompany');
+            },
+            'forwardingCompany',
+            'buyer',
+            'customer',
+            'warehouseCompany',
+        ])->find($id);
+
+        $res = $package->warehouse->groupBy('product_id')->map(function ($item) {
+            $first = $item->first();
+
+            return array_merge($first->product->toArray(), [
+                'quantity'          => $item->sum('quantity'),
+                'status'            => $first->status,
+                'warehouse_company' => optional($first->warehouseCompany)->name,
+                'batch_number'      => $item,
+            ]);
+        })->values();
+
+        $package->offsetUnset('warehouse');
+        $package->setAttribute('warehouse', $res);
+
+        $products = Product::whereIn('id', collect($package->product)->pluck('product_id')->toArray())->select('id', 'sku', 'image')->get();
+
+        $data = [
+            'forwarding_company' => $package->forwardingCompany->name,//货运公司
+            'lading_number' => $package->lading_number,//提单号
+            'container_number' => $package->container_number,//集装箱号
+            'seal_number' => $package->seal_number,//铅封号
+//            'packaged_at' => Carbon::parse($package->packaged_at)->toDateString(),//发货日
+            'arrival_at' => Carbon::parse($package->arrival_at)->toDateString(),//到港时间
+            'entry_at' => Carbon::parse($package->entry_at)->toDateString(),//预计入仓时间
+            'checkin_at' => Carbon::parse($package->checkin_at)->toDateString(),//实际入仓时间
+        ];
+
+        $package->product = collect($package->product)->map(function ($item) use ($products, $data) {
+            $product = $products->where('id', $item['product_id'])->first()->toArray();
+            $product['quantity'] = $item['quantity'];
+            $product['packaged_at'] = $item['packaged_at'];
+
+            return array_merge($data, [
+                'sku' => $product['sku'],
+                'quantity' => $item['quantity'],
+                'packaged_at' => Carbon::parse($item['packaged_at'])->toDateString(),//发货日
+            ]);
+        });
+
+        return Excel::download(
+            new PackagesExport($package->product, $package->lading_number),
+            "{$package->lading_number}_发货清单.xlsx"   //导出的文件名
+        );
     }
 }

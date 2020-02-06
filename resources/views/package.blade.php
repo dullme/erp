@@ -21,6 +21,10 @@
                 <div class="pull-right grid-create-btn" style="margin-right: 10px;margin-top: 5px">
                     <span class="label label-info" style="padding: 8px 10px;">待入库</span>
                 </div>
+
+                <div class="pull-right grid-create-btn" style="margin-right: 10px;margin-top: 5px">
+                    <a href="{{ url('/admin/api/package/download/'.$package->id) }}" target="_blank" class="label btn-sm label-default" style="padding: 8px 10px;"><i class="fa fa-download"> 发货清单</i></a>
+                </div>
             @endif
 
             @if($package->status == 2)
@@ -29,7 +33,7 @@
                 </div>
 
                 <div class="pull-right grid-create-btn" style="margin-right: 10px;margin-top: 5px">
-                    <a class="label btn-sm label-default" style="padding: 8px 10px;"><i class="fa fa-download"> 发货清单</i></a>
+                    <a href="{{ url('/admin/api/package/download/'.$package->id) }}" target="_blank" class="label btn-sm label-default" style="padding: 8px 10px;"><i class="fa fa-download"> 发货清单</i></a>
                 </div>
             @endif
 
