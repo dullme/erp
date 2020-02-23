@@ -188,7 +188,7 @@ class ProductTwoController extends ResponseController
             $img->save('uploads/thumb/images/' . $path);
 
             return $path;
-        });
+        })->removable();
         $form->text('description', __('描述'));
         $form->UEditor('content', __('详情'));
 

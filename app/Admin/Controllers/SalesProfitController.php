@@ -45,7 +45,7 @@ class SalesProfitController extends ResponseController
         $grid->column('payment','金额')->display(function (){
             return '$ '.bigNumber($this->quantity * $this->ddp)->getValue();
         });
-        $grid->column('created_at', __('转入时间'))->display(function ($date){
+        $grid->column('created_at', __('销售时间'))->display(function ($date){
             return substr($date, 0, 10);
         });
         $grid->column('updated_at', __('导入时间'));
