@@ -45,7 +45,7 @@ class ComposeController extends ResponseController
     protected function grid()
     {
         $grid = new Grid(new Compose);
-        $grid->model()->orderByDesc('order');
+        $grid->model()->orderByDesc('order')->orderByDesc('id');
 
         $session_hq = Session::get('hq', config('hq'));
 
@@ -167,12 +167,11 @@ class ComposeController extends ResponseController
     public function store()
     {
         request()->validate([
-            'name' => 'required|unique:composes,name',
+            'name' => 'required',
             'asin' => 'required|unique:composes,asin',
             'hq'   => 'nullable',
         ], [
             'name.required' => '请输入组合名称',
-            'name.unique'   => '该名称已存在',
             'asin.required' => '请输入 ASKU',
             'asin.unique'   => '该 ASKU 已存在',
         ]);
@@ -235,12 +234,11 @@ class ComposeController extends ResponseController
     {
         request()->validate([
             'id'       => 'required',
-            'name'     => 'required|unique:composes,name',
+            'name'     => 'required',
             'asin'     => 'required|unique:composes,asin',
             'quantity' => 'required|integer',
         ], [
             'name.required'     => '请输入组合名称',
-            'name.unique'       => '组合名称已存在',
             'id.required'       => '缺少参数',
             'asin.required'     => '请输入 ASKU',
             'asin.unique'       => '该 ASKU 已存在',
