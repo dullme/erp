@@ -228,31 +228,38 @@ class ProductTwoController extends ResponseController
     {
         $now = Carbon::now()->toDateString();
         $importData = Excel::toCollection(new ProductsImport, $request->file('file'))[0]; //Excel 导入的数据
+
         try {
             $importData = $importData->forget(0)->map(function ($item, $key) use ($now) {
                 if(!isset($item[0]) || !isset($item[1]) || !isset($item[2]) || !isset($item[3]) || !isset($item[4]) || !isset($item[5])){
                     throw new \Exception("第{$key}行数据不全");
                 }
 
-                return [
-                    'sku'         => (string)$item[0],
-                    'length'      => (float)$item[1],
-                    'width'       => (float)$item[2],
-                    'height'      => (float)$item[3],
-                    'weight'      => (float)$item[4],
-                    'ddp'         => (integer)$item[5],
-                    'hq'          => (string) isset($item[6]) ? $item[6] : null,
-                    'unit'        => (string) isset($item[7]) ? $item[7] : null,
-                    'description' => (string) isset($item[8]) ? $item[8] : null,
-                    'content'     => (string) isset($item[9]) ? $item[9] : null,
-                    'created_at'  => $now,
-                    'updated_at'  => $now,
-                ];
+                if($item[0] != '' || $item[0] != null){
+                    return [
+                        'sku'         => (string)$item[0],
+                        'length'      => (float)$item[1],
+                        'width'       => (float)$item[2],
+                        'height'      => (float)$item[3],
+                        'weight'      => (float)$item[4],
+                        'ddp'         => (integer)$item[5],
+                        'hq'          => (string) isset($item[6]) ? $item[6] : null,
+                        'unit'        => (string) isset($item[7]) ? $item[7] : null,
+                        'description' => (string) isset($item[8]) ? $item[8] : null,
+                        'content'     => (string) isset($item[9]) ? $item[9] : null,
+                        'created_at'  => $now,
+                        'updated_at'  => $now,
+                    ];
+                }
+
+                return null;
             });
         }catch (\Exception $exception){
             return $this->responseError($exception->getMessage());
         }
-
+        $importData = $importData->filter(function ($value) {
+            return $value != null;
+        });
 
         if ($importData->count() == 0) {
             return $this->responseError('Excel 中没有数据');
