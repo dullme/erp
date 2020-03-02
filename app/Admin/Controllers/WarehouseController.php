@@ -106,6 +106,11 @@ class WarehouseController extends ResponseController
         $order = Order::with(['orderBatch'=>function($query){
             $query->where('status', 0);
         }])->findOrfail(request()->input('order_id'));
+        $ids = $order->orderProduct->pluck('product_id')->toArray();
+        $nowIds = $productInfo->pluck('product_id')->toArray();
+        if(count(array_diff($nowIds, $ids)) > 0){
+            return $this->setStatusCode(422)->responseError('无法入库，出错了！');
+        }
 
         if($order->orderBatch->count()){
             return $this->setStatusCode(422)->responseError('无法入库，存在待审核的入库记录');

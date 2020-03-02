@@ -18,6 +18,7 @@ Route::group([
     //单品管理
     $router->resource('products', ProductController::class);
     $router->get('api/product', 'ProductController@product');
+    $router->get('api/order/product', 'ProductController@orderProduct');
 
     //组合管理
     $router->resource('composes', ComposeController::class);

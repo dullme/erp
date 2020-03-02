@@ -190,7 +190,7 @@
 
             productInfoSelect2(index){
                 this.$nextTick( ()=> {
-                    Common.select(this.edit_data.product, '#product_id' + index, "/admin/api/product?order_id="+this.order_id, "name", "text", true, '请选输入关键字', 1, 'zh-CN',
+                    Common.select(this.edit_data.product, '#product_id' + index, "/admin/api/order/product?order_id="+this.order_id, "name", "text", true, '请选输入关键字', 1, 'zh-CN',
                         function (repo) {
                             if (repo.loading) return '搜索中...';
                             let image = repo['image'] ? "/uploads/"+repo['image'] : 'http://erp.test/vendor/laravel-admin/AdminLTE/dist/img/user2-160x160.jpg'

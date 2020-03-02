@@ -196,4 +196,30 @@ class ProductController extends AdminController
 
         return response()->json($products);
     }
+
+    public function orderProduct()
+    {
+        $q = request()->input('q');
+        $order_id = request()->input('order_id');
+        $order = Order::with('orderProduct', 'warehouses')->find($order_id);
+        $ids = $order->orderProduct->pluck('product_id')->toArray();
+        $products = Product::where('sku', 'like', '%' . $q . '%')
+            ->whereIn('id', $ids)
+            ->select('id', 'sku as text', 'description', 'ddp', 'image')->get();
+
+        $products->map(function ($item){
+            $item['image'] = $item['image'] ? 'thumb/'.$item['image'] : '../images/default.png';
+            return $item;
+        });
+
+        $products->map(function ($item)use($order){
+            $item['needed'] = $order->orderProduct->where('product_id',$item['id'])->sum('quantity');
+            $item['has'] = $order->warehouses->where('product_id',$item['id'])->sum('quantity');
+            $item['need'] = $item['needed'] - $item['has'];
+
+            return $item;
+        });
+
+        return response()->json($products);
+    }
 }
