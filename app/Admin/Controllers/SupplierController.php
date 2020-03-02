@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Post\Restore;
 use App\Admin\Extensions\SupplierImport;
 use App\Buyer;
 use Excel;
@@ -41,6 +42,20 @@ class SupplierController extends ResponseController
             $filter->disableIdFilter();
             $filter->like('name', '名称');
             $filter->like('mobile', '电话');
+
+            // 范围过滤器，调用模型的`onlyTrashed`方法，查询出被软删除的数据。
+            $filter->scope('trashed', '回收站')->onlyTrashed();
+        });
+
+        $grid->actions(function ($actions) {
+
+            if (\request('_scope_') == 'trashed') {
+                $actions->add(new Restore());
+                $actions->disableEdit();
+                $actions->disableDelete();
+                $actions->disableView();
+            }
+
         });
 
         $grid->column('name', __('名称'));
@@ -162,7 +177,7 @@ class SupplierController extends ResponseController
             return $this->responseError('Excel 中没有数据');
         }
 
-        $suppliers = Supplier::whereIn('name', $importData->pluck('name')->toArray())->get();
+        $suppliers = Supplier::whereIn('name', $importData->pluck('name')->toArray())->withTrashed()->get();
 
         if ($suppliers->count()) {
             return $this->responseError(implode(',', $suppliers->pluck('name')->toArray()).'数据库中已存在');

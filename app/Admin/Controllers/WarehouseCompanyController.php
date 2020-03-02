@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Post\Restore;
 use App\Admin\Extensions\WarehouseCompanyImport;
 use App\Imports\WarehouseCompaniesImport;
 use Excel;
@@ -39,6 +40,20 @@ class WarehouseCompanyController extends ResponseController
             $filter->disableIdFilter();
             $filter->like('name', '名称');
             $filter->like('mobile', '电话');
+
+            // 范围过滤器，调用模型的`onlyTrashed`方法，查询出被软删除的数据。
+            $filter->scope('trashed', '回收站')->onlyTrashed();
+        });
+
+        $grid->actions(function ($actions) {
+
+            if (\request('_scope_') == 'trashed') {
+                $actions->add(new Restore());
+                $actions->disableEdit();
+                $actions->disableDelete();
+                $actions->disableView();
+            }
+
         });
 
         $grid->column('name', __('名称'))->display(function ($name){
@@ -169,7 +184,7 @@ class WarehouseCompanyController extends ResponseController
             return $this->responseError('Excel 中没有数据');
         }
 
-        $warehouseCompanies = WarehouseCompany::whereIn('name', $importData->pluck('name')->toArray())->get();
+        $warehouseCompanies = WarehouseCompany::whereIn('name', $importData->pluck('name')->toArray())->withTrashed()->get();
 
         if ($warehouseCompanies->count()) {
             return $this->responseError(implode(',', $warehouseCompanies->pluck('name')->toArray()).'数据库中已存在');
