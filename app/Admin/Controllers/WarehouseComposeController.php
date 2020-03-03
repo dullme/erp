@@ -6,6 +6,7 @@ use App\Compose;
 use App\Warehouse;
 use App\WarehouseCompany;
 use DB;
+use Encore\Admin\Form;
 use Encore\Admin\Grid;
 
 class WarehouseComposeController extends ResponseController
@@ -47,6 +48,10 @@ class WarehouseComposeController extends ResponseController
 
             return "<a href='/admin/composes/{$this->id}' data-toggle='tooltip' data-placement='top\' title='' data-original-title='{$name}'>{$short}</a>";
         });
+
+        $grid->column('order', __('设置序号'))->editable();
+        $grid->column('count', __('设置匹配数'))->editable();
+
         if(!is_null($company_id)){
             $warehouseCompany = WarehouseCompany::find($company_id);
             $grid->tools(function ($tools) use($warehouseCompany) {
@@ -62,7 +67,7 @@ class WarehouseComposeController extends ResponseController
         $warehouseComposeWithSea = $warehouseComposeWithSeaC->getCompose();
         $warehouseComposeWithSeaNowHave = $warehouseComposeWithSeaC->getNowHave();
 
-        $grid->column('quantity', '设置匹配数/美仓库存')->display(function () use($warehouseCompose, $warehouseComposeNowHave) {
+        $grid->column('quantity', '美仓库存')->display(function () use($warehouseCompose, $warehouseComposeNowHave) {
 
             $composeProducts = $this->composeProducts->map(function ($item){
                 return [
@@ -80,7 +85,7 @@ class WarehouseComposeController extends ResponseController
                 $color = 'warning';
             }
 
-            $html = "<span style='display: inline-block' class='label label-{$color}'>{$this->count} / {$warehouseCompose[$this->id]}</span><br/>";
+            $html = "<span style='display: inline-block' class='label label-{$color}'>{$warehouseCompose[$this->id]}</span><br/>";
             foreach ($composeProducts as $item){
                 $count = isset($warehouseComposeNowHave[$item['id']]) ? $warehouseComposeNowHave[$item['id']] : 0;//剩余可匹配数
 
@@ -90,7 +95,7 @@ class WarehouseComposeController extends ResponseController
             return $html;
         });
 
-        $grid->column('quantityWithSea', '设置匹配数/包括运输中的库存')->display(function () use($warehouseComposeWithSea, $warehouseComposeWithSeaNowHave) {
+        $grid->column('quantityWithSea', '包括运输中的库存')->display(function () use($warehouseComposeWithSea, $warehouseComposeWithSeaNowHave) {
 
             $composeProducts = $this->composeProducts->map(function ($item){
                 return [
@@ -108,7 +113,7 @@ class WarehouseComposeController extends ResponseController
                 $color = 'warning';
             }
 
-            $html = "<span style='display: inline-block' class='label label-{$color}'>{$this->count} / {$warehouseComposeWithSea[$this->id]}</span><br/>";
+            $html = "<span style='display: inline-block' class='label label-{$color}'>{$warehouseComposeWithSea[$this->id]}</span><br/>";
             foreach ($composeProducts as $item){
                 $count = isset($warehouseComposeWithSeaNowHave[$item['id']]) ? $warehouseComposeWithSeaNowHave[$item['id']] : 0;//剩余可匹配数
 
@@ -131,4 +136,28 @@ class WarehouseComposeController extends ResponseController
 
         return $grid;
     }
+
+
+    protected function form()
+    {
+        $form = new Form(new Compose);
+
+        $form->text('name', __('组合名称'))->rules('required');
+        $form->text('asin', __('ASIN'))->rules('required');
+        $form->text('hq', __('HQ'));
+        $form->number('count', __('设置匹配数'));
+        $form->number('order', __('序号'))->rules('integer');
+        $form->multipleImage('image', __('图片'))->name(function ($file) {
+            $img = Image::make($file)->widen(300, function ($constraint) {
+                $constraint->upsize();
+            });
+            $path = md5(uniqid()).'.'.$file->guessExtension();
+            $img->save('uploads/thumb/images/'.$path);
+            return $path;
+        })->removable();
+        $form->UEditor('content', __('详情'));
+
+        return $form;
+    }
+
 }
