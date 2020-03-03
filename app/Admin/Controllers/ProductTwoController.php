@@ -137,6 +137,11 @@ class ProductTwoController extends ResponseController
             $tools->append('<a style="margin-right: 5px" class="btn btn-sm btn-warning pull-right p_update_control" data-toggle="modal" data-target="#change_weight"><i class="fa fa-balance-scale"></i> <span class="hidden-xs">' . $weight_text . '</span></a>');
         });
 
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $filter->like('SKU');
+        });
+
         return $grid;
     }
 

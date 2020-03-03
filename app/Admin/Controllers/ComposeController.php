@@ -106,7 +106,7 @@ class ComposeController extends ResponseController
 
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
-            $filter->in('id', 'ASKU')->multipleSelect('api/compose-select');
+            $filter->like('asin', 'ASKU');
         });
 
         return $grid;

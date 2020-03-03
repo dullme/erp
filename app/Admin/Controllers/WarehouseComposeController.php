@@ -48,8 +48,6 @@ class WarehouseComposeController extends ResponseController
 
             return "<a href='/admin/composes/{$this->id}' data-toggle='tooltip' data-placement='top\' title='' data-original-title='{$name}'>{$short}</a>";
         });
-
-        $grid->column('order', __('设置序号'))->editable();
         $grid->column('count', __('设置匹配数'))->editable();
 
         if(!is_null($company_id)){
@@ -123,9 +121,11 @@ class WarehouseComposeController extends ResponseController
             return $html;
         });
 
+        $grid->column('order', __('设置序号'))->editable();
+
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
-            $filter->in('id', 'ASKU')->multipleSelect('api/compose-select');
+            $filter->like('asin', 'ASKU');
         });
 
         $grid->disableExport();
