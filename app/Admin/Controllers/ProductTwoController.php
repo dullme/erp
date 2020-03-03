@@ -119,6 +119,10 @@ class ProductTwoController extends ResponseController
         $grid->disableExport();
         $grid->disableRowSelector();
 
+        $grid->actions(function ($actions) {
+            $actions->disableDelete();
+        });
+
 
         $grid->tools(function ($tools) use ($session_hq) {
 

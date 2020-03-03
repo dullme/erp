@@ -8,6 +8,12 @@
                     <i class="fa fa-list"></i><span class="hidden-xs"> 列表</span>
                 </a>
             </div>
+
+            <div class="btn-group pull-right" style="margin-right: 5px">
+                <a href="{{ url('/admin/composes/'.$compose->id.'/edit') }}" class="btn btn-sm btn-info" title="编辑">
+                    <i class="fa fa-list"></i><span class="hidden-xs"> 编辑</span>
+                </a>
+            </div>
         </div>
     </div>
     <!-- /.box-header -->

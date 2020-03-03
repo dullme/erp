@@ -58,11 +58,19 @@ class WarehouseCompose
     public function enough($composeProducts)
     {
         $enough = true;
+        if(count(array_diff_key($composeProducts, $this->nowHave)) > 0){
+            return false;
+        }//无法构成组合
+
         foreach ($composeProducts as $key=>$product){
             if(isset($this->nowHave[$key])){
-                $enough = $this->nowHave[$key] >= $product ?? false;
+                if($this->nowHave[$key] < $product){
+                    $enough = false; //单品数量不足构成组合
+                    break;
+                }
             }else{
-                $enough = false;
+                $enough = false; //缺少该单品
+                break;
             }
         }
 
@@ -71,7 +79,6 @@ class WarehouseCompose
                 $this->nowHave[$key] = $this->nowHave[$key] - $product;
             }
         }
-
         return $enough;
     }
 

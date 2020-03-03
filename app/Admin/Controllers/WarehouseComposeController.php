@@ -28,7 +28,7 @@ class WarehouseComposeController extends ResponseController
 
         $company_id = request()->input('company_id');
         $grid = new Grid(new Compose);
-        $grid->model()->orderByDesc('id');
+        $grid->model()->orderByDesc('order')->orderByDesc('id');
 
         $grid->column('asin', __('ASKU'));
         $grid->column('image', '图片')->display(function ($image) {
@@ -62,34 +62,60 @@ class WarehouseComposeController extends ResponseController
         $warehouseComposeWithSea = $warehouseComposeWithSeaC->getCompose();
         $warehouseComposeWithSeaNowHave = $warehouseComposeWithSeaC->getNowHave();
 
-        $grid->column('count', '设置匹配数');
+        $grid->column('quantity', '设置匹配数/美仓库存')->display(function () use($warehouseCompose, $warehouseComposeNowHave) {
 
-        $grid->column('quantity', '美仓库存')->display(function () use($warehouseCompose, $warehouseComposeNowHave) {
-            $composeProducts = $this->composeProducts->pluck('quantity', 'product_id')->toArray();
-            $count=[];
-            foreach ($composeProducts as $key=>$item){
-                if(isset($warehouseComposeNowHave[$key])){
-                    $count[] = intval($warehouseComposeNowHave[$key]/$item);
-                }else{
-                    $count[] = 0;
-                }
+            $composeProducts = $this->composeProducts->map(function ($item){
+                return [
+                    'id' => $item['product_id'],
+                    'sku' => $item['product']['sku'],
+                    'quantity' => $item['quantity'],
+                ];
+            })->toArray();
+
+            if($warehouseCompose[$this->id] >= $this->count){
+                $color = 'success';
+            }else if($warehouseCompose[$this->id] > 0){
+                $color = 'info';
+            }else{
+                $color = 'warning';
             }
 
-            return $warehouseCompose[$this->id].'-'.min($count);
+            $html = "<span style='display: inline-block' class='label label-{$color}'>{$this->count} / {$warehouseCompose[$this->id]}</span><br/>";
+            foreach ($composeProducts as $item){
+                $count = isset($warehouseComposeNowHave[$item['id']]) ? $warehouseComposeNowHave[$item['id']] : 0;//剩余可匹配数
+
+                $html .="<span style='display: inline-block' class='label label-default'>{$item['sku']} * {$item['quantity']}</span> <span style='display: inline-block' class='label label-default'>{$count}</span><br/>";
+            }
+
+            return $html;
         });
 
-        $grid->column('quantityWithSea', '包括运输中的库存')->display(function () use($warehouseComposeWithSea, $warehouseComposeWithSeaNowHave) {
-            $composeProducts = $this->composeProducts->pluck('quantity', 'product_id')->toArray();
-            $count=[];
-            foreach ($composeProducts as $key=>$item){
-                if(isset($warehouseComposeWithSeaNowHave[$key])){
-                    $count[] = intval($warehouseComposeWithSeaNowHave[$key]/$item);
-                }else{
-                    $count[] = 0;
-                }
+        $grid->column('quantityWithSea', '设置匹配数/包括运输中的库存')->display(function () use($warehouseComposeWithSea, $warehouseComposeWithSeaNowHave) {
+
+            $composeProducts = $this->composeProducts->map(function ($item){
+                return [
+                    'id' => $item['product_id'],
+                    'sku' => $item['product']['sku'],
+                    'quantity' => $item['quantity'],
+                ];
+            })->toArray();
+
+            if($warehouseComposeWithSea[$this->id] >= $this->count){
+                $color = 'success';
+            }else if($warehouseComposeWithSea[$this->id] > 0){
+                $color = 'info';
+            }else{
+                $color = 'warning';
             }
 
-            return $warehouseComposeWithSea[$this->id].'-'.min($count);
+            $html = "<span style='display: inline-block' class='label label-{$color}'>{$this->count} / {$warehouseComposeWithSea[$this->id]}</span><br/>";
+            foreach ($composeProducts as $item){
+                $count = isset($warehouseComposeWithSeaNowHave[$item['id']]) ? $warehouseComposeWithSeaNowHave[$item['id']] : 0;//剩余可匹配数
+
+                $html .="<span style='display: inline-block' class='label label-default'>{$item['sku']} * {$item['quantity']}</span> <span style='display: inline-block' class='label label-default'>{$count}</span><br/>";
+            }
+
+            return $html;
         });
 
         $grid->filter(function ($filter) {

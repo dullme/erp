@@ -93,6 +93,7 @@ class ComposeController extends ResponseController
         $grid->column('order', __('序号'))->editable();
 
         $grid->disableExport();
+        $grid->disableRowSelector();
 
         $grid->tools(function ($tools) use ($session_hq) {
 
@@ -101,6 +102,11 @@ class ComposeController extends ResponseController
             $unit_text = Session::get('unit', 'cm') == 'cm' ? '厘米' : '英寸';
 
             $tools->append('<a style="margin-right: 5px" class="btn btn-sm btn-info pull-right p_update_control" data-toggle="modal" data-target="#change_unit"><i class="fa fa-codepen"></i> <span class="hidden-xs">' . $unit_text . '</span></a>');
+        });
+
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $filter->in('id', 'ASKU')->multipleSelect('api/compose-select');
         });
 
         return $grid;
@@ -294,7 +300,7 @@ class ComposeController extends ResponseController
     public function composeSelect()
     {
         $q = request()->input('q');
-        $products = Compose::where('name', 'like', '%'.$q.'%')->select('id', 'name as text')->get();
+        $products = Compose::where('asin', 'like', '%'.$q.'%')->select('id', 'asin as text')->get();
 
         return response()->json($products);
     }
