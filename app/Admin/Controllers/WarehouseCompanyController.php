@@ -61,19 +61,22 @@ class WarehouseCompanyController extends ResponseController
         });
         $grid->column('english_name', __('英文名称'));
         $grid->column('contact_person', __('联系人'));
-        $grid->column('position', __('职位'));
+//        $grid->column('position', __('职位'));
         $grid->column('mobile', __('手机号码'));
-        $grid->column('tel', __('办公室电话'));
-        $grid->column('fax', __('传真号码'));
-        $grid->column('email', __('邮箱'));
-        $grid->column('website', __('网站'));
-        $grid->column('address', __('地址'));
+//        $grid->column('tel', __('办公室电话'));
+//        $grid->column('fax', __('传真号码'));
+//        $grid->column('email', __('邮箱'));
+//        $grid->column('website', __('网站'));
+        $grid->column('address', __('地址'))->display(function ($address){
+            $short = mb_substr($address, 0, 10);
+            return "<span data-toggle='tooltip' data-placement='top\' title='' data-original-title='{$address}'>{$short}</span>";
+        });
         $grid->column('supply', __('境内货源地'));
         $grid->column('tax_id', __('税号'));
         $grid->column('bank', __('开户行'));
         $grid->column('bank_account', __('账号'));
-        $grid->column('remark', __('备注'));
-        $grid->column('register', __('登记'));
+//        $grid->column('remark', __('备注'));
+//        $grid->column('register', __('登记'));
         $grid->column('created_at', __('添加时间'));
 
         return $grid;

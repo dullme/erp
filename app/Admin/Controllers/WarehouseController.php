@@ -29,12 +29,11 @@ class WarehouseController extends ResponseController
     {
         $grid = new Grid(new Product);
 
-        $grid->column('id', __('ID'));
+        $grid->column('sku', __('SKU'));
         $grid->column('image', __('图片'))->display(function ($image) {
             return $image? 'thumb/' . $image : asset('images/default.png');
         })->image('', 50, 50);
         $grid->column('description', __('描述'));
-        $grid->column('sku', __('SKU'));
 //        $grid->column('volume', '体积')->display(function (){
 //            return $this->length * $this->width * $this->height / 1000000;
 //        });
@@ -57,7 +56,7 @@ class WarehouseController extends ResponseController
         });
 
         $grid->column('quantity_3', '美国仓')->display(function () {
-            return $this->warehouses->where('status', 3)->sum('quantity');
+            return $this->warehouses->where('status', 3)->where('warehouse_company_id', 8)->sum('quantity');
         });
 
         $grid->column('quantity_4', '电商')->display(function () {
@@ -70,6 +69,11 @@ class WarehouseController extends ResponseController
         $grid->disableColumnSelector();
         $grid->disableCreateButton();
         $grid->disableRowSelector();
+
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            $filter->like('sku', 'SKU');
+        });
 
         return $grid;
     }

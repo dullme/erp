@@ -83,7 +83,11 @@ class PackageController extends ResponseController
                 return "{$res->sku}:{$item['quantity']}";
             })->toArray();
 
-            return implode("|", $product);
+            $long = implode("｜", $product);
+            $mark = count($product) > 3 ? ' ...' : '';
+            $short = implode("｜", array_slice($product, 0, 3)) . $mark;
+
+            return "<span data-toggle='tooltip' data-placement='top\' title='' data-original-title='{$long}'>{$short}</span>";
         });
         $grid->column('status', '状态')->display(function ($status) {
             if ($status == 1) {

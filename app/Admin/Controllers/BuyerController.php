@@ -53,7 +53,10 @@ class BuyerController extends ResponseController
         $grid->column('fax', __('传真号码'));
         $grid->column('email', __('邮箱'));
         $grid->column('website', __('网站'));
-        $grid->column('address', __('地址'));
+        $grid->column('address', __('地址'))->display(function ($address){
+            $short = mb_substr($address, 0, 10);
+            return "<span data-toggle='tooltip' data-placement='top\' title='' data-original-title='{$address}'>{$short}</span>";
+        });
         $grid->column('supply', __('境内货源地'));
         $grid->column('tax_id', __('税号'));
         $grid->column('bank', __('开户行'));
