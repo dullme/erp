@@ -87,4 +87,6 @@ Route::group([
     //销售利润表
     $router->resource('sales-profits', SalesProfitController::class);
     $router->post('/api/sales-profit-import', 'SalesProfitController@import');
+
+    $router->get('/upload/sales-profit-import', 'SalesProfitController@importView');
 });

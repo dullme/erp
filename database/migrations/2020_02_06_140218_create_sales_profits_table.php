@@ -18,6 +18,7 @@ class CreateSalesProfitsTable extends Migration
             $table->string('asin')->comment('ASKU');
             $table->integer('quantity')->comment('数量');
             $table->decimal('ddp', 10, 2)->comment('价格');
+            $table->text('products')->nullable();
             $table->timestamps();
         });
     }

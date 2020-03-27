@@ -2,8 +2,10 @@
 
 namespace App\Admin\Controllers;
 
+use App\Compose;
 use App\Order;
 use App\OrderBatch;
+use App\SalesProfit;
 use App\Warehouse;
 use Carbon\Carbon;
 use DB;
@@ -27,6 +29,19 @@ class WarehouseController extends ResponseController
      */
     protected function grid()
     {
+        $sales_data = [];
+        $sales_profits = SalesProfit::all();
+
+        foreach ($sales_profits as $item){
+            foreach ($item->products as $product){
+                if(isset($sales_data[$product['id']])){
+                    $sales_data[$product['id']] += $product['quantity'] * $item->quantity;
+                }else{
+                    $sales_data[$product['id']] = $product['quantity'] * $item->quantity;
+                }
+            }
+        }
+
         $grid = new Grid(new Product);
 
         $grid->column('sku', __('SKU'));
@@ -55,14 +70,21 @@ class WarehouseController extends ResponseController
             return $this->warehouses->where('status', 2)->sum('quantity');
         });
 
-        $grid->column('quantity_3', '美国仓')->display(function () {
-            return $this->warehouses->where('status', 3)->where('warehouse_company_id', 8)->sum('quantity');
+        $grid->column('quantity_3', '美国仓')->display(function () use($sales_data) {
+            $quantity = $this->warehouses->where('status', 3)->sum('quantity');
+            $sales = isset($sales_data[$this->id]) ? $sales_data[$this->id] : 0;
+            $res = $quantity - $sales;
+            return $res;
+//            return "{$quantity} - {$sales} = {$res}";
+//            return $this->warehouses->where('status', 3)->where('warehouse_company_id', 8)->sum('quantity');
         });
 
-        $grid->column('quantity_4', '电商')->display(function () {
-            return $this->warehouses->where('status', 4)->sum('quantity');
+//        $grid->column('quantity_4', '电商')->display(function () {
+//            return $this->warehouses->where('status', 4)->sum('quantity');
+//        });
+        $grid->column('sales_data', __('累计售出'))->display(function () use($sales_data){
+            return isset($sales_data[$this->id]) ? $sales_data[$this->id] : 0;
         });
-//        $grid->column('created_at', __('添加时间'));
 
         $grid->disableExport();
         $grid->disableActions();

@@ -144,7 +144,7 @@ class ComposeController extends ResponseController
         $form = new Form(new Compose);
 
         $form->text('name', __('组合名称'))->rules('required');
-        $form->text('asin', __('ASIN'))->rules('required');
+        $form->text('asin', __('ASKU'))->rules('required')->disable();
         $form->text('hq', __('HQ'));
         $form->number('count', __('设置匹配数'));
         $form->number('order', __('序号'))->rules('integer');

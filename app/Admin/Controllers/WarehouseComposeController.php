@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Compose;
+use App\SalesProfit;
 use App\Warehouse;
 use App\WarehouseCompany;
 use DB;
@@ -57,6 +58,14 @@ class WarehouseComposeController extends ResponseController
             });
         }
 
+        $sales=SalesProfit::where('warehouse_company_id', $company_id)->get();
+        $sales = $sales->groupBy('asin')->map(function ($item, $key){
+            return [
+                'asin' => $key,
+                'quantity' => $item->sum('quantity')
+            ];
+        })->pluck('quantity', 'asin');
+
         $warehouseComposeC = new WarehouseCompose([3,4], $company_id);
         $warehouseCompose = $warehouseComposeC->getCompose();
         $warehouseComposeNowHave = $warehouseComposeC->getNowHave();
@@ -65,7 +74,7 @@ class WarehouseComposeController extends ResponseController
         $warehouseComposeWithSea = $warehouseComposeWithSeaC->getCompose();
         $warehouseComposeWithSeaNowHave = $warehouseComposeWithSeaC->getNowHave();
 
-        $grid->column('quantity', '美仓库存')->display(function () use($warehouseCompose, $warehouseComposeNowHave) {
+        $grid->column('quantity', '美仓库存')->display(function () use($warehouseCompose, $warehouseComposeNowHave, $sales) {
 
             $composeProducts = $this->composeProducts->map(function ($item){
                 return [
@@ -83,7 +92,16 @@ class WarehouseComposeController extends ResponseController
                 $color = 'warning';
             }
 
-            $html = "<span style='display: inline-block' class='label label-{$color}'>{$warehouseCompose[$this->id]}</span><br/>";
+            $quantity = $warehouseCompose[$this->id];
+            $salesed = isset($sales[$this->asin]) ? $sales[$this->asin] : 0;
+            $res = $quantity - $salesed;
+
+            if($res < 0){
+                $color = 'danger';
+            }
+
+
+            $html = "<span style='display: inline-block' class='label label-{$color}'>{$quantity} - {$salesed} = {$res}</span><br/>";
             foreach ($composeProducts as $item){
                 $count = isset($warehouseComposeNowHave[$item['id']]) ? $warehouseComposeNowHave[$item['id']] : 0;//剩余可匹配数
 
@@ -93,7 +111,7 @@ class WarehouseComposeController extends ResponseController
             return $html;
         });
 
-        $grid->column('quantityWithSea', '包括运输中的库存')->display(function () use($warehouseComposeWithSea, $warehouseComposeWithSeaNowHave) {
+        $grid->column('quantityWithSea', '包括运输中的库存')->display(function () use($warehouseComposeWithSea, $warehouseComposeWithSeaNowHave, $sales) {
 
             $composeProducts = $this->composeProducts->map(function ($item){
                 return [
@@ -111,7 +129,11 @@ class WarehouseComposeController extends ResponseController
                 $color = 'warning';
             }
 
-            $html = "<span style='display: inline-block' class='label label-{$color}'>{$warehouseComposeWithSea[$this->id]}</span><br/>";
+            $quantity = $warehouseComposeWithSea[$this->id];
+            $salesed = isset($sales[$this->asin]) ? $sales[$this->asin] : 0;
+            $res = $quantity - $salesed;
+
+            $html = "<span style='display: inline-block' class='label label-{$color}'>{$warehouseComposeWithSea[$this->id]} - {$salesed} = {$res}</span><br/>";
             foreach ($composeProducts as $item){
                 $count = isset($warehouseComposeWithSeaNowHave[$item['id']]) ? $warehouseComposeWithSeaNowHave[$item['id']] : 0;//剩余可匹配数
 

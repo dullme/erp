@@ -20,6 +20,10 @@ class Compose extends Model
         return $this->hasMany(ComposeProduct::class)->with('product');
     }
 
+    public function onlyComposeProducts(){
+        return $this->hasMany(ComposeProduct::class);
+    }
+
     public function setImageAttribute($image)
     {
         if (is_array($image)) {
