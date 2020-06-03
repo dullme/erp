@@ -215,7 +215,7 @@ class PackageController extends ResponseController
     public function store()
     {
         $request = request()->validate([
-            'lading_number'         => 'required|unique:packages,lading_number',
+            'lading_number'         => 'required',
             'agreement_no'          => 'required',
             'container_number'      => 'nullable',
             'seal_number'           => 'nullable',
