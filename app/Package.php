@@ -60,6 +60,6 @@ class Package extends Model
 
     public function items()
     {
-        return $this->hasMany(packageItem::class);
+        return $this->hasMany(PackageItem::class);
     }
 }

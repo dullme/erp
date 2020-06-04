@@ -314,7 +314,7 @@ class PackageController extends ResponseController
                     ];
                 });
 
-                packageItem::insert($itemInfo->toArray());
+                PackageItem::insert($itemInfo->toArray());
             }
 
             $warehouse = Warehouse::where('status', 1)->whereIn('product_id', $productInfo->pluck('product_id'))->get();
