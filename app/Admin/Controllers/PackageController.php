@@ -205,7 +205,7 @@ class PackageController extends ResponseController
             'off' => ['value' => 0, 'text' => '否'],
         ]);
 
-        $form->hasMany('items', '他的作品', function (Form\NestedForm $form){
+        $form->hasMany('items', '赠品选择', function (Form\NestedForm $form){
             $form->select('item_id', __('赠品'))->options(Item::pluck('name', 'id'))->required();
             $form->number('quantity', __('数量'))->min(1)->default(1)->required();
         });
