@@ -57,4 +57,9 @@ class Package extends Model
     {
         return $this->belongsTo(WarehouseCompany::class);
     }
+
+    public function items()
+    {
+        return $this->hasMany(packageItem::class);
+    }
 }

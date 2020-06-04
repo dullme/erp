@@ -249,6 +249,42 @@
                         </div>
 
 
+                        <div class="form-group  ">
+                            <label class="col-sm-2  control-label">赠品选择</label>
+                            <div class="col-sm-8">
+                                <table class="table table-hover" id="item-table-fields">
+                                    <tbody>
+                                    <tr>
+                                        <th>赠品</th>
+                                        <th style="width: 100px">赠品数量</th>
+                                        <th style="width: 100px">操作</th>
+                                    </tr>
+                                    <tr :id="'item_info'+item_info.id" v-for="(item_info) in form_data.item_info" :key="item_info.length">
+                                        <td>
+                                            <select class="form-control" :id="'item_id' + item_info.id" v-model="item_info.id"> </select>
+                                        </td>
+                                        <td>
+                                            <input :id="'quantity'+item_info.id" type="text" class="form-control numeric" value="1"
+                                                   @keyup="item_info.quantity = $event.target.value" placeholder="数量" >
+                                        </td>
+                                        <td><a class="btn btn-sm btn-danger table-field-remove" @click="deleteItem(item_info.id)"><i class="fa fa-trash"></i> 删除</a></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <hr style="margin-top: 0;">
+                                <div class="form-inline margin" style="width: 100%">
+                                    <div class="form-group">
+                                        <button type="button" @click="addItem" class="btn btn-sm btn-success" id="add-item-table-field">
+                                            <i class="fa fa-plus"></i>&nbsp;&nbsp;添加
+                                        </button>
+                                        <span class="text-danger" id="item_info_message"></span>
+                                        <span class="text-danger" v-if="this.errors.has('item_info')">{{ this.errors.get('item_info') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
 <!--                        <div class="form-group" :class="{'has-error': this.errors.has('images')}">-->
 <!--                            <label class="col-sm-2  control-label">文件上传</label>-->
 <!--                            <div class="col-sm-8">-->
@@ -316,9 +352,12 @@
                     remark:'',
                     images: [],  //图片
                     product_info:[], //单品
+                    item_info:[], //赠品
                 },
                 product_info_count:0,
                 info_length:0,
+                item_info_count:0,
+                item_info_length:0,
                 edit_data: {
                     product:[],
                     forwarding_company_id:'',
@@ -332,6 +371,11 @@
             product_info_count(newVal, oldVal){
                 if(newVal > oldVal){
                     this.productInfoSelect2('l-'+this.info_length)
+                }
+            },
+            item_info_count(newVal, oldVal){
+                if(newVal > oldVal){
+                    this.itemInfoSelect2('il-'+this.item_info_length)
                 }
             }
         },
@@ -396,6 +440,22 @@
                 //     this.productInfoSelect2(value.id)
                 // })
                 this.product_info_count = this.form_data.product_info.length
+            },
+
+            deleteItem(length){
+                console.log(length)
+                this.errors.clear('item_info')
+                this.form_data.item_info.forEach((value, index)=>{
+                    if(value.id == length){
+                        $('#item_info'+value.id).remove()
+                        this.form_data.item_info[index].deleted = true;
+                        // this.$delete(this.form_data.product_info, index)
+                    }
+                })
+                // this.form_data.product_info.forEach((value)=>{
+                //     this.productInfoSelect2(value.id)
+                // })
+                this.item_info_count = this.form_data.item_info.length
             },
 
             supplierSelect2(){
@@ -515,6 +575,60 @@
 
             },
 
+            itemInfoSelect2(index){
+                this.$nextTick( ()=> {
+                    Common.select([], '#item_id' + index, "/admin/api/items", "name", "unit", true, '请选择赠品');
+
+                    $('#item_id' + index).on('change', (e) => {
+                        this.errors.clear('item_info')
+                        this.form_data.item_info.forEach((value, key)=>{
+
+                            if(value.id == index){
+                                this.$set(this.form_data.item_info[key], 'item_id', e.target.value);
+                            }
+                        })
+                    });
+
+                    $('#item_info' + index + ' .numeric').inputmask({
+                        "alias": "integer",
+                    });
+                })
+            },
+
+            addItem(){
+                this.errors.clear('item_info')
+                let last_item_info = this.form_data.item_info[this.form_data.item_info.length -1]
+                if(last_item_info && last_item_info['deleted'] == false){
+                    if(!last_item_info['item_id']){
+                        this.setInfoMessage('item_info', '请选择赠品')
+                        return false;
+                    }
+
+                    if(last_item_info['quantity'] <=0){
+                        this.setInfoMessage('item_info', '数量必须大于0')
+                        return false;
+                    }
+
+                    // if(last_product_info['price'] <=0){
+                    //     this.setInfoMessage('product_info', '单价必须大于0')
+                    //     return false;
+                    // }
+                }
+
+                this.form_data.item_info.push({
+                    id:'il-' + (++this.item_info_length),
+                    item_id:'',
+                    quantity:1,
+                    deleted:false
+                });
+
+                this.item_info_count = this.form_data.item_info.length
+                this.$nextTick( ()=> {
+                    $(".decimal").inputmask({ alias: "decimal"});
+                })
+
+            },
+
             setInfoMessage(id,text){
                 $('#'+id+'_message').html(text)
                 setTimeout(function () {
@@ -562,6 +676,12 @@
                             form_data.append('product_info['+i+'][product_id]',this.form_data.product_info[i].product_id)
                             form_data.append('product_info['+i+'][quantity]',this.form_data.product_info[i].quantity)
                             form_data.append('product_info['+i+'][deleted]',this.form_data.product_info[i].deleted)
+                        }
+                    }else if(i == 'item_info'){
+                        for(let i=0,len=this.form_data.item_info.length;i<len;i++){
+                            form_data.append('item_info['+i+'][item_id]',this.form_data.item_info[i].item_id)
+                            form_data.append('item_info['+i+'][quantity]',this.form_data.item_info[i].quantity)
+                            form_data.append('item_info['+i+'][deleted]',this.form_data.item_info[i].deleted)
                         }
                     }else{
                         form_data.append(i, this.form_data[i]);

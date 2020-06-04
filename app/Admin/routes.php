@@ -15,6 +15,10 @@ Route::group([
     $router->post('/api/change-unit', 'HomeController@changeUnit');
     $router->post('/api/change-weight', 'HomeController@changeWeight');
 
+    //配件管理
+    $router->resource('items', ItemController::class);
+    $router->get('/api/items', 'ItemController@itemList');
+
     //单品管理
     $router->resource('products', ProductController::class);
     $router->get('api/product', 'ProductController@product');

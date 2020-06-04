@@ -4,7 +4,9 @@ namespace App\Admin\Controllers;
 
 use App\Exports\PackagesExport;
 use App\ForwardingCompany;
+use App\Item;
 use App\Package;
+use App\PackageItem;
 use App\Product;
 use App\Warehouse;
 use Carbon\Carbon;
@@ -16,6 +18,7 @@ use Encore\Admin\Layout\Content;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use function foo\func;
 
 class PackageController extends ResponseController
 {
@@ -142,6 +145,7 @@ class PackageController extends ResponseController
             'buyer',
             'customer',
             'warehouseCompany',
+            'items.item'
         ])->find($id);
 
         $res = $package->warehouse->groupBy('product_id')->map(function ($item) {
@@ -178,7 +182,8 @@ class PackageController extends ResponseController
      */
     protected function form()
     {
-        $form = new Form(new Package);
+        $form = new Form(new Package());
+        $form->display('id', 'ID');
 
         $form->text('lading_number', __('提单号'))->required();
         $form->text('agreement_no', __('合同号'))->required();
@@ -199,6 +204,11 @@ class PackageController extends ResponseController
             'on'  => ['value' => 1, 'text' => '是'],
             'off' => ['value' => 0, 'text' => '否'],
         ]);
+
+        $form->hasMany('items', '他的作品', function (Form\NestedForm $form){
+            $form->select('item_id', __('赠品'))->options(Item::pluck('name', 'id'))->required();
+            $form->number('quantity', __('数量'))->min(1)->default(1)->required();
+        });
 
         return $form;
     }
@@ -263,6 +273,11 @@ class PackageController extends ResponseController
             return $this->setStatusCode(422)->responseError('必须添加单品');
         }
 
+
+        $itemInfo = request()->input('item_info');
+        $itemInfo = collect($itemInfo)->where('deleted', 'false')->where('item_id', '!=', null);
+
+
 //        if ($file) {
 //            $file = $this->saveAgreementFile($file);
 //            $file = $file->pluck('path')->toArray();
@@ -283,6 +298,24 @@ class PackageController extends ResponseController
             $request['product'] = $productInfo->values();
             Storage::makeDirectory('public/packages/' . request()->input('lading_number'));
             $package = Package::create($request);
+
+            if($itemInfo->count() > 0){
+                if ($itemInfo->where('quantity', '<', 1)->count()) {
+                    return $this->setStatusCode(422)->responseError('赠品数量必须大于0');
+                }
+                $itemInfo = $itemInfo->groupBy('item_id')->map(function ($item, $index) use ($packaged_at, $package) {
+
+                    return [
+                        'package_id' => $package->id,
+                        'item_id'  => $index,
+                        'quantity'    => $item->sum('quantity'),
+                        'created_at' => $packaged_at->toDateTimeString(),
+                        'updated_at' => $packaged_at->toDateTimeString(),
+                    ];
+                });
+
+                packageItem::insert($itemInfo->toArray());
+            }
 
             $warehouse = Warehouse::where('status', 1)->whereIn('product_id', $productInfo->pluck('product_id'))->get();
             $warehouse = $warehouse->groupBy('product_id');

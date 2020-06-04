@@ -146,6 +146,32 @@
 
         @endif
 
+        @if($package->items->count())
+            <div class="col-lg-8 col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">赠品</div>
+                    <table class="table table-bordered text-center">
+                        <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>数量</th>
+                            <th>备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($package->items as $item)
+                                <tr>
+                                    <td>{{ $item->item->name }}</td>
+                                    <td>{{ $item->quantity }}/{{ $item->item->unit }}</td>
+                                    <td>{{ $item->item->remark }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
+
     </div>
 </div>
 
